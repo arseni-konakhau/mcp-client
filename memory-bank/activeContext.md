@@ -18,6 +18,8 @@ The project is in its initial state with minimal implementation:
 - **Memory Bank Creation**: Establishing documentation foundation
 - **Project Analysis**: Reviewed existing codebase structure and dependencies
 - **Architecture Planning**: Documented intended system patterns and technical approach
+- **RUN-PROJECT-GUIDE.md Created**: Comprehensive guide for running the project
+- **404 Behavior Clarified**: Documented that 404 errors are expected in foundation phase
 
 ## Current Technical State
 

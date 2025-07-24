@@ -179,3 +179,16 @@ REMEMBER: After every memory reset, I begin completely fresh. The Memory Bank is
 - `memory-bank/activeContext.md`: Current work focus and next steps
 - `memory-bank/progress.md`: What's implemented vs. what's needed
 - `src/main/java/com/mcpclient/mcpclient/McpclientApplication.java`: Main application entry point
+- `RUN-PROJECT-GUIDE.md`: Comprehensive setup and execution instructions
+
+### Critical Project Status Knowledge
+- **404 Errors are Expected**: In foundation phase, 404 responses indicate the application is running correctly
+- **No Controllers Yet**: Project starts with minimal Spring Boot setup, no REST endpoints implemented
+- **Application Health Check**: 404 with JSON error response = healthy running application
+- **Development Ready**: Foundation phase complete, ready for Phase 1 (Core MCP Integration)
+
+### User Experience Patterns
+- **Documentation First**: User values comprehensive guides and clear explanations
+- **Status Clarity**: Important to explain expected vs. unexpected behaviors
+- **Troubleshooting Focus**: Detailed troubleshooting sections are essential
+- **Phase-Based Approach**: User follows structured development phases from memory bank

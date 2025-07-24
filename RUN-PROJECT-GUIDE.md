@@ -115,12 +115,21 @@ java -jar build/libs/mcpclient-0.0.1-SNAPSHOT.jar
 - **Context Path**: / (root)
 - **Application Name**: mcpclient
 
-### Health Check
-Once running, verify the application is healthy:
+### Application Status Check
+Once running, verify the application is running:
 ```bash
-curl http://localhost:8080/actuator/health
-# Or visit in browser: http://localhost:8080/actuator/health
+# Check if application is responding (will return 404 - this is expected)
+curl http://localhost:8080
+# Expected: 404 error with JSON response - this means the app is running correctly
 ```
+
+**Important Note**: The 404 error is expected because:
+- No controllers or endpoints are implemented yet
+- No static content (index.html) exists
+- Spring Boot Actuator endpoints are not enabled by default
+- This is a minimal Spring Boot application in foundation phase
+
+The 404 response with JSON error details confirms the application is running properly.
 
 ## Development Commands
 
@@ -215,6 +224,25 @@ chmod +x gradlew
    ```
 2. Check Java version compatibility
 3. Verify internet connection for dependency downloads
+
+#### Issue: "Getting 404 error when accessing http://localhost:8080"
+**This is EXPECTED behavior** - the application is working correctly!
+
+**Why you see 404:**
+- The project is in foundation phase with no controllers implemented
+- No static content (like index.html) exists yet
+- No REST endpoints are defined yet
+
+**What the 404 response tells you:**
+- ✅ Spring Boot application is running
+- ✅ Tomcat server is responding
+- ✅ Error handling is working (returns proper JSON error)
+- ✅ Ready for development
+
+**Next steps:**
+- Follow `memory-bank/progress.md` to see what needs to be implemented
+- Start with Phase 1: Core MCP Integration
+- Add controllers and endpoints as development progresses
 
 ### Logs and Debugging
 
