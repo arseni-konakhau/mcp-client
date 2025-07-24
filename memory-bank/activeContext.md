@@ -20,6 +20,8 @@ The project is in its initial state with minimal implementation:
 - **Architecture Planning**: Documented intended system patterns and technical approach
 - **RUN-PROJECT-GUIDE.md Created**: Comprehensive guide for running the project
 - **404 Behavior Clarified**: Documented that 404 errors are expected in foundation phase
+- **Port Customization**: Changed default port from 8080 to 3332 per user preference
+- **Documentation Updated**: All references updated to reflect new port 3332
 
 ## Current Technical State
 
