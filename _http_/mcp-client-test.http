@@ -1,0 +1,60 @@
+### MCP Client API Tests
+
+### 1. Initialize the MCP client connection
+POST http://localhost:3332/api/mcp/initialize
+Content-Type: application/json
+
+### 2. Check if client is ready
+GET http://localhost:3332/api/mcp/ready
+
+### 3. Get server capabilities
+GET http://localhost:3332/api/mcp/capabilities
+
+### 4. Get server information
+GET http://localhost:3332/api/mcp/server-info
+
+### 5. Get server instructions
+GET http://localhost:3332/api/mcp/server-instructions
+
+### 6. Ping the server
+POST http://localhost:3332/api/mcp/ping
+
+### 7. List available tools
+GET http://localhost:3332/api/mcp/tools
+
+### 8. Execute a Jira tool (example - list projects)
+POST http://localhost:3332/api/mcp/tools/jira_list_projects/execute
+Content-Type: application/json
+
+{
+  "max_results": 10
+}
+
+### 9. Execute a Confluence tool (example - search pages)
+POST http://localhost:3332/api/mcp/tools/confluence_search_pages/execute
+Content-Type: application/json
+
+{
+  "query": "documentation",
+  "limit": 5
+}
+
+### 10. List available resources
+GET http://localhost:3332/api/mcp/resources
+
+### 11. Read a specific resource (example)
+GET http://localhost:3332/api/mcp/resources/read?uri=jira://projects
+
+### 12. List available prompts
+GET http://localhost:3332/api/mcp/prompts
+
+### 13. Get a specific prompt (example)
+POST http://localhost:3332/api/mcp/prompts/jira_issue_summary
+Content-Type: application/json
+
+{
+  "issue_key": "PROJ-123"
+}
+
+### 14. Close the client connection gracefully
+POST http://localhost:3332/api/mcp/close
