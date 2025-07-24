@@ -1,0 +1,12 @@
+@host = http://localhost:8080
+
+
+# ======================================
+### echo:
+GET {{host}}
+
+# ======================================
+### healthcheck:
+GET {{host}}/actuator/health
+
+
