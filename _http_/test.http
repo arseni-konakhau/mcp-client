@@ -1,4 +1,4 @@
-@host = http://localhost:8080
+@host = http://localhost:3332
 
 
 # ======================================
@@ -8,5 +8,3 @@ GET {{host}}
 # ======================================
 ### healthcheck:
 GET {{host}}/actuator/health
-
-

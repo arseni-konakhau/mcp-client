@@ -37,9 +37,9 @@ gradlew.bat bootRun
 ```
 
 ### 3. Access the Application
-- **Application URL**: http://localhost:8080
+- **Application URL**: http://localhost:3332
 - **Application Name**: mcpclient
-- **Default Port**: 8080
+- **Custom Port**: 3332
 
 ## Detailed Setup Instructions
 
@@ -110,8 +110,8 @@ java -jar build/libs/mcpclient-0.0.1-SNAPSHOT.jar
 ## Application Access
 
 ### Default Configuration
-- **URL**: http://localhost:8080
-- **Port**: 8080
+- **URL**: http://localhost:3332
+- **Port**: 3332 (customized)
 - **Context Path**: / (root)
 - **Application Name**: mcpclient
 
@@ -119,7 +119,7 @@ java -jar build/libs/mcpclient-0.0.1-SNAPSHOT.jar
 Once running, verify the application is running:
 ```bash
 # Check if application is responding (will return 404 - this is expected)
-curl http://localhost:8080
+curl http://localhost:3332
 # Expected: 404 error with JSON response - this means the app is running correctly
 ```
 
@@ -171,6 +171,7 @@ The 404 response with JSON error details confirms the application is running pro
 The application configuration is in `src/main/resources/application.properties`:
 ```properties
 spring.application.name=mcpclient
+server.port=3332
 # Add additional configuration as needed
 ```
 
@@ -202,18 +203,18 @@ export PATH=$JAVA_HOME/bin:$PATH
 chmod +x gradlew
 ```
 
-#### Issue: "Port 8080 already in use"
+#### Issue: "Port 3332 already in use"
 **Solutions**:
-1. Kill process using port 8080:
+1. Kill process using port 3332:
    ```bash
-   # Find process using port 8080
-   lsof -i :8080
+   # Find process using port 3332
+   lsof -i :3332
    # Kill the process
    kill -9 <PID>
    ```
 2. Or run on different port:
    ```bash
-   ./gradlew bootRun --args='--server.port=8081'
+   ./gradlew bootRun --args='--server.port=3333'
    ```
 
 #### Issue: "Build failed"
@@ -225,7 +226,7 @@ chmod +x gradlew
 2. Check Java version compatibility
 3. Verify internet connection for dependency downloads
 
-#### Issue: "Getting 404 error when accessing http://localhost:8080"
+#### Issue: "Getting 404 error when accessing http://localhost:3332"
 **This is EXPECTED behavior** - the application is working correctly!
 
 **Why you see 404:**
@@ -292,7 +293,7 @@ logging.level.com.mcpclient=DEBUG
 ```bash
 java -jar build/libs/mcpclient-0.0.1-SNAPSHOT.jar \
   --spring.profiles.active=prod \
-  --server.port=8080
+  --server.port=3332
 ```
 
 ### Docker (Future Enhancement)
@@ -300,7 +301,7 @@ java -jar build/libs/mcpclient-0.0.1-SNAPSHOT.jar \
 # Dockerfile example for future use
 FROM openjdk:21-jre-slim
 COPY build/libs/mcpclient-0.0.1-SNAPSHOT.jar app.jar
-EXPOSE 8080
+EXPOSE 3332
 ENTRYPOINT ["java", "-jar", "/app.jar"]
 ```
 
