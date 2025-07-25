@@ -182,10 +182,11 @@ REMEMBER: After every memory reset, I begin completely fresh. The Memory Bank is
 - `RUN-PROJECT-GUIDE.md`: Comprehensive setup and execution instructions
 
 ### Critical Project Status Knowledge
-- **404 Errors are Expected**: In foundation phase, 404 responses indicate the application is running correctly
-- **No Controllers Yet**: Project starts with minimal Spring Boot setup, no REST endpoints implemented
-- **Application Health Check**: 404 with JSON error response = healthy running application
-- **Development Ready**: Foundation phase complete, ready for Phase 1 (Core MCP Integration)
+- **MCP Integration Complete**: ✅ Full MCP client-server integration working
+- **REST API Operational**: ✅ All MCP endpoints implemented and tested
+- **Atlassian Server Connected**: ✅ Successfully connecting to mcp-server--atlassian
+- **Tool Execution Working**: ✅ Confluence and Jira tools returning real data
+- **Production Ready**: Core functionality complete, ready for UI enhancement phase
 
 ### User Experience Patterns
 - **Documentation First**: User values comprehensive guides and clear explanations
@@ -194,3 +195,25 @@ REMEMBER: After every memory reset, I begin completely fresh. The Memory Bank is
 - **Phase-Based Approach**: User follows structured development phases from memory bank
 - **Port Customization**: User prefers custom port 3332 over default 8080
 - **Consistency**: All documentation must reflect configuration changes consistently
+- **Integration Testing**: User expects thorough validation of all endpoints with real data
+- **Memory Bank Updates**: User requests memory bank updates after major milestones
+
+### MCP Integration Lessons Learned
+- **Python Environment Issue**: Initial "Cannot run program 'python'" error resolved by using shell command with directory change
+- **Working Directory Critical**: MCP server must be executed from its own directory for proper dependency resolution
+- **Shell Command Pattern**: Use `/bin/sh -c "cd /path/to/server && command"` for subprocess execution
+- **Application Properties Solution**: Fixed via `mcp.servers.atlassian.command=/bin/sh` and proper arguments array
+- **Testing Approach**: Use curl commands to validate REST endpoints with real MCP server
+- **Success Indicators**: 
+  - Initialize returns server info (Atlassian MCP v1.9.4)
+  - Ready returns `true`
+  - Tools return 45+ available tools
+  - Confluence search returns actual pages with content
+  - Jira operations return real project data
+
+### Critical Configuration Patterns
+- **MCP Server Command**: Must use shell wrapper to change directory before execution
+- **Arguments Array**: Use comma-separated arguments in application.properties
+- **Path Requirements**: Absolute paths required for reliable subprocess execution
+- **Environment Variables**: MCP server needs .env file in its working directory
+- **Connection Validation**: Always test with simple operations first (initialize, ready, tools list)
