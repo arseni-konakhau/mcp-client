@@ -1,0 +1,417 @@
+### MCP Client Comprehensive End-to-End Test Suite
+### This file provides comprehensive testing for the MCP client integration with Atlassian MCP server
+### Use with REST clients like VS Code REST Client, Postman, or curl
+
+# =============================================
+# CONFIGURATION
+# =============================================
+@baseUrl = http://localhost:3332
+@serverUrl = http://localhost:9000
+
+# =============================================
+# SETUP INSTRUCTIONS
+# =============================================
+# 1. Ensure Atlassian MCP server is running on http://localhost:9000
+# 2. Ensure MCP client application is running on http://localhost:3332
+# 3. Run tests in sequence to validate complete workflow
+# 4. Monitor server logs for detailed debugging information
+
+# =============================================
+# PHASE 1: CLIENT HEALTH & CONNECTIVITY TESTS
+# =============================================
+
+### 1.1 Health Check - Verify client is running
+GET {{baseUrl}}/actuator/health
+Content-Type: application/json
+
+### Expected Response: {"status": "UP"}
+
+### 1.2 Client Info - Get application information
+GET {{baseUrl}}/actuator/info
+Content-Type: application/json
+
+# =============================================
+# PHASE 2: MCP PROTOCOL INITIALIZATION TESTS
+# =============================================
+
+### 2.1 Initialize MCP Client Connection
+POST {{baseUrl}}/api/mcp/initialize
+Content-Type: application/json
+
+### Expected Response: InitializeResult with protocol version and capabilities
+
+### 2.2 Check Client Readiness
+GET {{baseUrl}}/api/mcp/ready
+
+### Expected Response: true/false indicating client initialization status
+
+### 2.3 Get Server Capabilities
+GET {{baseUrl}}/api/mcp/capabilities
+
+### Expected Response: ServerCapabilities object with available features
+
+### 2.4 Get Server Information
+GET {{baseUrl}}/api/mcp/server-info
+
+### Expected Response: Implementation details about the MCP server
+
+### 2.5 Get Server Instructions
+GET {{baseUrl}}/api/mcp/server-instructions
+
+### Expected Response: String containing server instructions
+
+### 2.6 Ping Server - Test Connectivity
+POST {{baseUrl}}/api/mcp/ping
+
+### Expected Response: Pong or connectivity confirmation
+
+# =============================================
+# PHASE 3: TOOL DISCOVERY & EXECUTION TESTS
+# =============================================
+
+### 3.1 List Available Tools
+GET {{baseUrl}}/api/mcp/tools
+
+### Expected Response: Array of available tools with schemas
+
+### 3.2 Execute Jira Search Tool
+POST {{baseUrl}}/api/mcp/tools/jira_search/execute
+Content-Type: application/json
+
+{
+  "jql": "project = SMP ORDER BY created DESC",
+  "limit": 5,
+  "fields": "summary,status,assignee,priority,updated"
+}
+
+### Expected Response: Search results from Jira API
+
+### 3.3 Execute Jira Get Issue Tool
+POST {{baseUrl}}/api/mcp/tools/jira_get_issue/execute
+Content-Type: application/json
+
+{
+  "issue_key": "SMP-1",
+  "fields": "summary,status,assignee,description,comments",
+  "expand": "transitions,changelog",
+  "comment_limit": 5
+}
+
+### Expected Response: Detailed issue information
+
+### 3.4 Execute Jira Get User Profile Tool
+POST {{baseUrl}}/api/mcp/tools/jira_get_user_profile/execute
+Content-Type: application/json
+
+{
+  "user_identifier": "arseny.konohov2@gmail.com"
+}
+
+### Expected Response: User profile information
+
+### 3.5 Execute Jira Search with Custom Fields
+POST {{baseUrl}}/api/mcp/tools/jira_search/execute
+Content-Type: application/json
+
+{
+  "jql": "status = 'In Progress' AND project = SMP",
+  "fields": "summary,status,assignee,priority,updated",
+  "limit": 10,
+  "expand": "transitions"
+}
+
+### Expected Response: Filtered search results
+
+### 3.6 Execute Jira Search with All Fields
+POST {{baseUrl}}/api/mcp/tools/jira_search/execute
+Content-Type: application/json
+
+{
+  "jql": "assignee = currentUser() ORDER BY updated DESC",
+  "fields": "*all",
+  "limit": 3
+}
+
+### Expected Response: Complete issue data with all fields
+
+# =============================================
+# PHASE 4: RESOURCE MANAGEMENT TESTS
+# =============================================
+
+### 4.1 List Available Resources
+GET {{baseUrl}}/api/mcp/resources
+
+### Expected Response: Array of available resources
+
+### 4.2 Read Jira Projects Resource
+GET {{baseUrl}}/api/mcp/resources/read?uri=jira://projects
+
+### Expected Response: Jira projects data
+
+### 4.3 Read Jira Issues Resource
+GET {{baseUrl}}/api/mcp/resources/read?uri=jira://issues
+
+### Expected Response: Jira issues data
+
+### 4.4 Read Confluence Spaces Resource
+GET {{baseUrl}}/api/mcp/resources/read?uri=confluence://spaces
+
+### Expected Response: Confluence spaces data
+
+# =============================================
+# PHASE 5: PROMPT HANDLING TESTS
+# =============================================
+
+### 5.1 List Available Prompts
+GET {{baseUrl}}/api/mcp/prompts
+
+### Expected Response: Array of available prompts
+
+### 5.2 Get Jira Issue Summary Prompt
+POST {{baseUrl}}/api/mcp/prompts/jira_issue_summary
+Content-Type: application/json
+
+{
+  "issue_key": "SMP-1"
+}
+
+### Expected Response: Formatted issue summary
+
+### 5.3 Get Project Overview Prompt
+POST {{baseUrl}}/api/mcp/prompts/project_overview
+Content-Type: application/json
+
+{
+  "project_key": "SMP"
+}
+
+### Expected Response: Project overview information
+
+# =============================================
+# PHASE 6: ERROR HANDLING & EDGE CASES
+# =============================================
+
+### 6.1 Test Invalid Tool Name
+POST {{baseUrl}}/api/mcp/tools/invalid_tool_name/execute
+Content-Type: application/json
+
+{
+  "test": "data"
+}
+
+### Expected Response: Error with appropriate error code
+
+### 6.2 Test Missing Required Parameters
+POST {{baseUrl}}/api/mcp/tools/jira_get_issue/execute
+Content-Type: application/json
+
+{
+  "fields": "summary,status"
+}
+
+### Expected Response: Error indicating missing required parameter
+
+### 6.3 Test Invalid JQL Query
+POST {{baseUrl}}/api/mcp/tools/jira_search/execute
+Content-Type: application/json
+
+{
+  "jql": "invalid jql syntax here",
+  "limit": 5
+}
+
+### Expected Response: JQL validation error
+
+### 6.4 Test Invalid Resource URI
+GET {{baseUrl}}/api/mcp/resources/read?uri=invalid://resource
+
+### Expected Response: Resource not found error
+
+### 6.5 Test Invalid Prompt Name
+POST {{baseUrl}}/api/mcp/prompts/invalid_prompt_name
+Content-Type: application/json
+
+{
+  "test": "data"
+}
+
+### Expected Response: Prompt not found error
+
+# =============================================
+# PHASE 7: PERFORMANCE & LOAD TESTING
+# =============================================
+
+### 7.1 Quick Response Time Test - Simple Tool List
+GET {{baseUrl}}/api/mcp/tools
+
+### 7.2 Medium Load Test - Search with Pagination
+POST {{baseUrl}}/api/mcp/tools/jira_search/execute
+Content-Type: application/json
+
+{
+  "jql": "project = SMP",
+  "limit": 50,
+  "start_at": 0
+}
+
+### 7.3 Heavy Load Test - Complex Search with All Fields
+POST {{baseUrl}}/api/mcp/tools/jira_search/execute
+Content-Type: application/json
+
+{
+  "jql": "project = SMP AND updated >= -30d",
+  "fields": "*all",
+  "limit": 100,
+  "expand": "transitions,changelog"
+}
+
+# =============================================
+# PHASE 8: REAL-TIME COLLABORATION SIMULATION
+# =============================================
+
+### 8.1 Concurrent Session Test - Session 1
+POST {{baseUrl}}/api/mcp/initialize
+Content-Type: application/json
+
+### 8.2 Concurrent Session Test - Session 2 (Simulate another client)
+POST {{baseUrl}}/api/mcp/initialize
+Content-Type: application/json
+
+### 8.3 Real-time Data Sync Test - Get Latest Issues
+POST {{baseUrl}}/api/mcp/tools/jira_search/execute
+Content-Type: application/json
+
+{
+  "jql": "project = SMP AND updated >= -1h",
+  "limit": 10
+}
+
+### 8.4 Real-time Data Sync Test - Get User Activity
+POST {{baseUrl}}/api/mcp/tools/jira_search/execute
+Content-Type: application/json
+
+{
+  "jql": "assignee = currentUser() AND updated >= -1h",
+  "limit": 5
+}
+
+# =============================================
+# PHASE 9: INTEGRATION WORKFLOW TESTS
+# =============================================
+
+### 9.1 Complete User Workflow - Initialize and Search
+# Step 1: Initialize
+POST {{baseUrl}}/api/mcp/initialize
+Content-Type: application/json
+
+### 9.2 Complete User Workflow - Get User Profile
+POST {{baseUrl}}/api/mcp/tools/jira_get_user_profile/execute
+Content-Type: application/json
+
+{
+  "user_identifier": "currentUser()"
+}
+
+### 9.3 Complete User Workflow - Search User's Issues
+POST {{baseUrl}}/api/mcp/tools/jira_search/execute
+Content-Type: application/json
+
+{
+  "jql": "assignee = currentUser() ORDER BY updated DESC",
+  "limit": 10
+}
+
+### 9.4 Complete User Workflow - Get Specific Issue Details
+POST {{baseUrl}}/api/mcp/tools/jira_get_issue/execute
+Content-Type: application/json
+
+{
+  "issue_key": "SMP-1",
+  "fields": "summary,status,assignee,description,comments",
+  "expand": "transitions"
+}
+
+### 9.5 Complete User Workflow - Get Issue Summary Prompt
+POST {{baseUrl}}/api/mcp/prompts/jira_issue_summary
+Content-Type: application/json
+
+{
+  "issue_key": "SMP-1"
+}
+
+# =============================================
+# PHASE 10: CLEANUP & SESSION MANAGEMENT
+# =============================================
+
+### 10.1 Close Client Connection Gracefully
+POST {{baseUrl}}/api/mcp/close
+
+### Expected Response: true indicating successful closure
+
+### 10.2 Verify Client is Closed
+GET {{baseUrl}}/api/mcp/ready
+
+### Expected Response: false indicating client is no longer ready
+
+# =============================================
+# CURL EXAMPLES FOR AUTOMATION
+# =============================================
+
+### Health Check with curl
+# curl -X GET {{baseUrl}}/actuator/health
+
+### Initialize Client with curl
+# curl -X POST {{baseUrl}}/api/mcp/initialize \
+#   -H "Content-Type: application/json"
+
+### List Tools with curl
+# curl -X GET {{baseUrl}}/api/mcp/tools
+
+### Execute Jira Search with curl
+# curl -X POST {{baseUrl}}/api/mcp/tools/jira_search/execute \
+#   -H "Content-Type: application/json" \
+#   -d '{
+#     "jql": "project = SMP ORDER BY created DESC",
+#     "limit": 5
+#   }'
+
+### Close Client with curl
+# curl -X POST {{baseUrl}}/api/mcp/close
+
+# =============================================
+# TESTING WORKFLOW & VALIDATION
+# =============================================
+# Recommended testing sequence:
+#
+# 1. Run Phase 1 tests to verify client health
+# 2. Run Phase 2 tests to validate MCP initialization
+# 3. Run Phase 3 tests to verify tool functionality
+# 4. Run Phase 4 tests to check resource management
+# 5. Run Phase 5 tests to validate prompt handling
+# 6. Run Phase 6 tests to verify error handling
+# 7. Run Phase 7 tests to check performance
+# 8. Run Phase 8 tests to simulate real-time scenarios
+# 9. Run Phase 9 tests to validate complete workflows
+# 10. Run Phase 10 tests to verify cleanup
+#
+# Expected outcomes:
+# - All health checks should return success
+# - MCP initialization should complete successfully
+# - Tool execution should return valid responses
+# - Error handling should provide meaningful messages
+# - Performance should meet acceptable thresholds
+# - Real-time scenarios should work correctly
+# - Complete workflows should execute end-to-end
+# - Cleanup should complete gracefully
+
+# =============================================
+# DEBUGGING & TROUBLESHOOTING
+# =============================================
+# 1. Check client logs for detailed error information
+# 2. Verify server is running and accessible
+# 3. Confirm authentication tokens are valid
+# 4. Check network connectivity between client and server
+# 5. Validate MCP protocol compliance
+# 6. Monitor performance metrics during testing
+# 7. Review error responses for specific failure reasons
+# 8. Test individual components before full workflow

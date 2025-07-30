@@ -1,0 +1,542 @@
+### MCP Atlassian HTTP Transport Validation Examples
+### This file provides examples for testing the MCP Atlassian server via HTTP transport
+### Use with REST clients like VS Code REST Client, Postman, or curl
+
+
+# =============================================
+# =============================================
+# to run in dev mode:
+# uv run mcp-atlassian --transport streamable-http --port 9000 --env-file .env --verbose
+# =============================================
+# =============================================
+
+# =============================================
+# CONFIGURATION
+# =============================================
+@baseUrl = http://localhost:9000
+
+# =============================================
+# SETUP INSTRUCTIONS
+# =============================================
+# 1. Start the server in HTTP mode:
+#    uv run mcp-atlassian --transport streamable-http --port 9000 --env-file .env --verbose
+#
+# 2. Or using Docker:
+#    docker run --rm -p 9000:9000 --env-file .env ghcr.io/sooperset/mcp-atlassian:latest \
+#      --transport streamable-http --port 9000
+#
+# 3. Server endpoints will be available at:
+#    - MCP Protocol: {{baseUrl}}/mcp
+#    - Health Check: {{baseUrl}}/healthz
+#    - SSE Transport: {{baseUrl}}/sse (if using --transport sse)
+#
+# 4. To change the server URL, update the @baseUrl variable above
+
+# =============================================
+# HEALTH CHECK
+# =============================================
+
+### Health Check - Verify server is running
+GET {{baseUrl}}/healthz
+Content-Type: application/json
+
+### Expected Response: {"status": "ok"}
+
+# =============================================
+# MCP PROTOCOL REQUESTS
+# =============================================
+# IMPORTANT: All MCP protocol requests MUST include the Accept header with both
+# "application/json" and "text/event-stream" to avoid 406 Not Acceptable errors.
+# The FastMCP framework requires clients to accept both content types for
+# proper content negotiation between regular JSON and streaming responses.
+#
+# SESSION MANAGEMENT: After initializing the session, you MUST include the
+# "mcp-session-id" header in all subsequent requests. Copy the session ID
+# from the initialize response and use it in the @sessionId variable below.
+
+@sessionId = your-session-id-here
+
+### 1. Initialize MCP Session
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": {
+      "tools": {}
+    },
+    "clientInfo": {
+      "name": "http-test-client",
+      "version": "1.0.0"
+    }
+  }
+}
+
+### 1a. Send Initialized Notification (REQUIRED after initialize)
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+
+{
+  "jsonrpc": "2.0",
+  "method": "notifications/initialized",
+  "params": {}
+}
+
+### 2. List Available Tools
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/list",
+  "params": {}
+}
+
+### 3. Jira Search Issues
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "jira_search",
+    "arguments": {
+      "jql": "project = SMP ORDER BY created DESC",
+      "limit": 5
+    }
+  }
+}
+
+### 4. Get Jira Issue
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+
+{
+  "jsonrpc": "2.0",
+  "id": 4,
+  "method": "tools/call",
+  "params": {
+    "name": "jira_get_issue",
+    "arguments": {
+      "issue_key": "SMP-1"
+    }
+  }
+}
+
+### 5. Get Jira User Profile
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+
+{
+  "jsonrpc": "2.0",
+  "id": 5,
+  "method": "tools/call",
+  "params": {
+    "name": "jira_get_user_profile",
+    "arguments": {
+      "user_identifier": "arseny.konohov2@gmail.com"
+    }
+  }
+}
+
+### 6. Jira Search with All Fields
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+
+{
+  "jsonrpc": "2.0",
+  "id": 6,
+  "method": "tools/call",
+  "params": {
+    "name": "jira_search",
+    "arguments": {
+      "jql": "assignee = currentUser() ORDER BY updated DESC",
+      "fields": "*all",
+      "limit": 3
+    }
+  }
+}
+
+### 7. Jira Search with Custom Fields
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+
+{
+  "jsonrpc": "2.0",
+  "id": 7,
+  "method": "tools/call",
+  "params": {
+    "name": "jira_search",
+    "arguments": {
+      "jql": "status = 'In Progress' AND project = SMP",
+      "fields": "summary,status,assignee,priority,updated",
+      "limit": 10,
+      "expand": "transitions"
+    }
+  }
+}
+
+### 8. Get Jira Issue with Expanded Fields
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+
+{
+  "jsonrpc": "2.0",
+  "id": 8,
+  "method": "tools/call",
+  "params": {
+    "name": "jira_get_issue",
+    "arguments": {
+      "issue_key": "SMP-1",
+      "fields": "summary,status,assignee,description,comments",
+      "expand": "transitions,changelog",
+      "comment_limit": 5
+    }
+  }
+}
+
+# =============================================
+# MULTI-USER AUTHENTICATION EXAMPLES
+# =============================================
+# These examples show how to use user-specific tokens
+# instead of the server's global configuration
+
+### 9. Jira Search with OAuth Token
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+Authorization: Bearer YOUR_OAUTH_ACCESS_TOKEN
+X-Atlassian-Cloud-Id: YOUR_CLOUD_ID
+
+{
+  "jsonrpc": "2.0",
+  "id": 9,
+  "method": "tools/call",
+  "params": {
+    "name": "jira_search",
+    "arguments": {
+      "jql": "assignee = currentUser() ORDER BY updated DESC",
+      "limit": 10
+    }
+  }
+}
+
+### 10. Jira Search with Personal Access Token (Server/DC)
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+Authorization: Token YOUR_PERSONAL_ACCESS_TOKEN
+
+{
+  "jsonrpc": "2.0",
+  "id": 10,
+  "method": "tools/call",
+  "params": {
+    "name": "jira_search",
+    "arguments": {
+      "jql": "reporter = currentUser() ORDER BY created DESC",
+      "limit": 5
+    }
+  }
+}
+
+### 11. Get User Profile with OAuth Token
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+Authorization: Bearer YOUR_OAUTH_ACCESS_TOKEN
+X-Atlassian-Cloud-Id: YOUR_CLOUD_ID
+
+{
+  "jsonrpc": "2.0",
+  "id": 11,
+  "method": "tools/call",
+  "params": {
+    "name": "jira_get_user_profile",
+    "arguments": {
+      "user_identifier": "currentUser()"
+    }
+  }
+}
+
+# =============================================
+# WRITE OPERATIONS (if READ_ONLY_MODE=false)
+# =============================================
+# These examples require write permissions
+
+### 12. Create Jira Issue
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+Authorization: Bearer YOUR_OAUTH_ACCESS_TOKEN
+
+{
+  "jsonrpc": "2.0",
+  "id": 12,
+  "method": "tools/call",
+  "params": {
+    "name": "jira_create_issue",
+    "arguments": {
+      "project_key": "SMP",
+      "summary": "Test issue created via HTTP MCP",
+      "description": "This issue was created to test the HTTP transport functionality",
+      "issue_type": "Task"
+    }
+  }
+}
+
+### 13. Update Jira Issue
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+Authorization: Bearer YOUR_OAUTH_ACCESS_TOKEN
+
+{
+  "jsonrpc": "2.0",
+  "id": 13,
+  "method": "tools/call",
+  "params": {
+    "name": "jira_update_issue",
+    "arguments": {
+      "issue_key": "SMP-1",
+      "fields": {
+        "summary": "Updated summary via HTTP MCP",
+        "description": "Updated description via HTTP transport"
+      }
+    }
+  }
+}
+
+### 14. Add Comment to Jira Issue
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+Authorization: Bearer YOUR_OAUTH_ACCESS_TOKEN
+
+{
+  "jsonrpc": "2.0",
+  "id": 14,
+  "method": "tools/call",
+  "params": {
+    "name": "jira_add_comment",
+    "arguments": {
+      "issue_key": "SMP-1",
+      "comment": "This comment was added via HTTP MCP transport for testing purposes."
+    }
+  }
+}
+
+### 15. Transition Jira Issue
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+Authorization: Bearer YOUR_OAUTH_ACCESS_TOKEN
+
+{
+  "jsonrpc": "2.0",
+  "id": 15,
+  "method": "tools/call",
+  "params": {
+    "name": "jira_transition_issue",
+    "arguments": {
+      "issue_key": "SMP-1",
+      "transition_id": "11",
+      "comment": "Moving to In Progress via HTTP MCP"
+    }
+  }
+}
+
+### 16. Create Confluence Page
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+Authorization: Bearer YOUR_OAUTH_ACCESS_TOKEN
+
+{
+  "jsonrpc": "2.0",
+  "id": 16,
+  "method": "tools/call",
+  "params": {
+    "name": "confluence_create_page",
+    "arguments": {
+      "space_key": "DEV",
+      "title": "Test Page via HTTP MCP",
+      "content": "<p>This page was created via HTTP MCP transport for testing.</p><h2>Features Tested</h2><ul><li>HTTP transport</li><li>Authentication</li><li>Page creation</li></ul>",
+      "parent_page_id": "123456"
+    }
+  }
+}
+
+# =============================================
+# ERROR HANDLING EXAMPLES
+# =============================================
+
+### 17. Invalid Tool Name
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+
+{
+  "jsonrpc": "2.0",
+  "id": 17,
+  "method": "tools/call",
+  "params": {
+    "name": "invalid_tool_name",
+    "arguments": {}
+  }
+}
+
+### 18. Missing Required Parameters
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+
+{
+  "jsonrpc": "2.0",
+  "id": 18,
+  "method": "tools/call",
+  "params": {
+    "name": "jira_get_issue",
+    "arguments": {}
+  }
+}
+
+### 19. Invalid JQL Query
+POST {{baseUrl}}/mcp
+Content-Type: application/json
+Accept: application/json, text/event-stream
+mcp-session-id: {{sessionId}}
+
+{
+  "jsonrpc": "2.0",
+  "id": 19,
+  "method": "tools/call",
+  "params": {
+    "name": "jira_search",
+    "arguments": {
+      "jql": "invalid jql syntax here",
+      "limit": 5
+    }
+  }
+}
+
+# =============================================
+# CURL EXAMPLES
+# =============================================
+# Use these commands in terminal for testing
+
+### Health Check with curl
+# curl -X GET {{baseUrl}}/healthz
+
+### List Tools with curl
+# curl -X POST {{baseUrl}}/mcp \
+#   -H "Content-Type: application/json" \
+#   -H "Accept: application/json, text/event-stream" \
+#   -d '{
+#     "jsonrpc": "2.0",
+#     "id": 1,
+#     "method": "tools/list",
+#     "params": {}
+#   }'
+
+### Search Jira Issues with curl and OAuth
+# curl -X POST {{baseUrl}}/mcp \
+#   -H "Content-Type: application/json" \
+#   -H "Accept: application/json, text/event-stream" \
+#   -H "Authorization: Bearer YOUR_OAUTH_TOKEN" \
+#   -H "X-Atlassian-Cloud-Id: YOUR_CLOUD_ID" \
+#   -d '{
+#     "jsonrpc": "2.0",
+#     "id": 2,
+#     "method": "tools/call",
+#     "params": {
+#       "name": "jira_search",
+#       "arguments": {
+#         "jql": "project = SMP ORDER BY created DESC",
+#         "limit": 5
+#       }
+#     }
+#   }'
+
+### Search Jira Issues with curl and PAT
+# curl -X POST {{baseUrl}}/mcp \
+#   -H "Content-Type: application/json" \
+#   -H "Accept: application/json, text/event-stream" \
+#   -H "Authorization: Token YOUR_PERSONAL_ACCESS_TOKEN" \
+#   -d '{
+#     "jsonrpc": "2.0",
+#     "id": 3,
+#     "method": "tools/call",
+#     "params": {
+#       "name": "jira_search",
+#       "arguments": {
+#         "jql": "assignee = currentUser()",
+#         "limit": 10
+#       }
+#     }
+#   }'
+
+# =============================================
+# TESTING WORKFLOW
+# =============================================
+# Recommended testing sequence:
+#
+# 1. Start with health check to verify server is running
+# 2. Initialize MCP session
+# 3. List available tools to see what's configured
+# 4. Test read operations first (search, get)
+# 5. Test write operations if needed (create, update)
+# 6. Test error handling with invalid requests
+# 7. Test multi-user authentication if applicable
+#
+# Expected responses:
+# - Health check: {"status": "ok"}
+# - Initialize: Server capabilities and protocol info
+# - Tools list: Array of available tools with schemas
+# - Tool calls: Results from Atlassian APIs formatted as MCP responses
+# - Errors: Proper JSON-RPC error responses with details
+
+# =============================================
+# DEBUGGING TIPS
+# =============================================
+# 1. Enable verbose logging: --verbose flag when starting server
+# 2. Check server logs for authentication and API call details
+# 3. Verify environment variables are loaded correctly
+# 4. Test with simple read operations before write operations
+# 5. Use MCP session IDs for tracking requests in logs
+# 6. Check Atlassian API documentation for valid JQL and parameters
+# 7. Verify OAuth tokens have required scopes for operations
