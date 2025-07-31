@@ -17,7 +17,9 @@
 # 4. Monitor server logs for detailed debugging information
 
 # =============================================
-# PHASE 1: CLIENT HEALTH & CONNECTIVITY TESTS
+# =============================================
+# HEALTH CHECK / INIT
+# =============================================
 # =============================================
 
 ### 1.1 Health Check - Verify client is running
@@ -30,51 +32,50 @@ Content-Type: application/json
 GET {{baseUrl}}/actuator/info
 Content-Type: application/json
 
-# =============================================
-# PHASE 2: MCP PROTOCOL INITIALIZATION TESTS
-# =============================================
+### Expected Response: Application info with version, build details, etc.
 
-### 2.1 Initialize MCP Client Connection
+### 1.3 Initialize MCP Client Connection
 POST {{baseUrl}}/api/mcp/initialize
 Content-Type: application/json
 
 ### Expected Response: InitializeResult with protocol version and capabilities
 
-### 2.2 Check Client Readiness
+### 1.4 Check Client Readiness
 GET {{baseUrl}}/api/mcp/ready
 
-### Expected Response: true/false indicating client initialization status
+### Expected Response: true indicating client initialization status
 
-### 2.3 Get Server Capabilities
+### 1.5 Get Server Capabilities
 GET {{baseUrl}}/api/mcp/capabilities
 
 ### Expected Response: ServerCapabilities object with available features
 
-### 2.4 Get Server Information
+### 1.6 Get Server Information
 GET {{baseUrl}}/api/mcp/server-info
 
 ### Expected Response: Implementation details about the MCP server
 
-### 2.5 Get Server Instructions
-GET {{baseUrl}}/api/mcp/server-instructions
+### 1.7 List Available Tools
+GET {{baseUrl}}/api/mcp/tools
 
-### Expected Response: String containing server instructions
+### Expected Response: Array of 45+ available tools with schemas
 
-### 2.6 Ping Server - Test Connectivity
+### 1.8 Ping Server - Test Connectivity
 POST {{baseUrl}}/api/mcp/ping
 
 ### Expected Response: Pong or connectivity confirmation
 
 # =============================================
-# PHASE 3: TOOL DISCOVERY & EXECUTION TESTS
+# =============================================
+# JIRA FUNCTIONALITY
+# =============================================
 # =============================================
 
-### 3.1 List Available Tools
-GET {{baseUrl}}/api/mcp/tools
+# =============================================
+# JIRA - SEARCH & RETRIEVAL
+# =============================================
 
-### Expected Response: Array of available tools with schemas
-
-### 3.2 Execute Jira Search Tool
+### 2.1 Jira Search Issues - Basic
 POST {{baseUrl}}/api/mcp/tools/jira_search/execute
 Content-Type: application/json
 
@@ -86,43 +87,7 @@ Content-Type: application/json
 
 ### Expected Response: Search results from Jira API
 
-### 3.3 Execute Jira Get Issue Tool
-POST {{baseUrl}}/api/mcp/tools/jira_get_issue/execute
-Content-Type: application/json
-
-{
-  "issue_key": "SMP-7",
-  "fields": "summary,status,assignee,description,comments",
-  "expand": "transitions,changelog",
-  "comment_limit": 5
-}
-
-### Expected Response: Detailed issue information
-
-### 3.4 Execute Jira Get User Profile Tool
-POST {{baseUrl}}/api/mcp/tools/jira_get_user_profile/execute
-Content-Type: application/json
-
-{
-  "user_identifier": "arseny.konohov2@gmail.com"
-}
-
-### Expected Response: User profile information
-
-### 3.5 Execute Jira Search with Custom Fields
-POST {{baseUrl}}/api/mcp/tools/jira_search/execute
-Content-Type: application/json
-
-{
-  "jql": "status = 'In Progress' AND project = SMP",
-  "fields": "summary,status,assignee,priority,updated",
-  "limit": 10,
-  "expand": "transitions"
-}
-
-### Expected Response: Filtered search results
-
-### 3.6 Execute Jira Search with All Fields
+### 2.2 Jira Search with All Fields
 POST {{baseUrl}}/api/mcp/tools/jira_search/execute
 Content-Type: application/json
 
@@ -134,64 +99,576 @@ Content-Type: application/json
 
 ### Expected Response: Complete issue data with all fields
 
-# =============================================
-# PHASE 4: RESOURCE MANAGEMENT TESTS
-# =============================================
+### 2.3 Jira Search with Custom Fields and Expand
+POST {{baseUrl}}/api/mcp/tools/jira_search/execute
+Content-Type: application/json
 
-### 4.1 List Available Resources
-GET {{baseUrl}}/api/mcp/resources
+{
+  "jql": "status = 'In Progress' AND project = SMP",
+  "fields": "summary,status,assignee,priority,updated",
+  "limit": 10,
+  "expand": "transitions"
+}
 
-### Expected Response: Array of available resources
+### Expected Response: Filtered search results with transitions
 
-### 4.2 Read Jira Projects Resource
-GET {{baseUrl}}/api/mcp/resources/read?uri=jira://projects
+### 2.4 Jira Search Fields
+POST {{baseUrl}}/api/mcp/tools/jira_search_fields/execute
+Content-Type: application/json
 
-### Expected Response: Jira projects data
+{
+  "keyword": "epic",
+  "limit": 10
+}
 
-### 4.3 Read Jira Issues Resource
-GET {{baseUrl}}/api/mcp/resources/read?uri=jira://issues
+### Expected Response: List of fields matching "epic"
 
-### Expected Response: Jira issues data
-
-### 4.4 Read Confluence Spaces Resource
-GET {{baseUrl}}/api/mcp/resources/read?uri=confluence://spaces
-
-### Expected Response: Confluence spaces data
-
-# =============================================
-# PHASE 5: PROMPT HANDLING TESTS
-# =============================================
-
-### 5.1 List Available Prompts
-GET {{baseUrl}}/api/mcp/prompts
-
-### Expected Response: Array of available prompts
-
-### 5.2 Get Jira Issue Summary Prompt
-POST {{baseUrl}}/api/mcp/prompts/jira_issue_summary
+### 2.5 Get Jira Issue - Basic
+POST {{baseUrl}}/api/mcp/tools/jira_get_issue/execute
 Content-Type: application/json
 
 {
   "issue_key": "SMP-1"
 }
 
-### Expected Response: Formatted issue summary
+### Expected Response: Basic issue information
 
-### 5.3 Get Project Overview Prompt
-POST {{baseUrl}}/api/mcp/prompts/project_overview
+### 2.6 Get Jira Issue with Expanded Fields
+POST {{baseUrl}}/api/mcp/tools/jira_get_issue/execute
+Content-Type: application/json
+
+{
+  "issue_key": "SMP-1",
+  "fields": "summary,status,assignee,description,comments",
+  "expand": "transitions,changelog",
+  "comment_limit": 5
+}
+
+### Expected Response: Detailed issue information with transitions and changelog
+
+### 2.7 Get Project Issues
+POST {{baseUrl}}/api/mcp/tools/jira_get_project_issues/execute
+Content-Type: application/json
+
+{
+  "project_key": "SMP",
+  "limit": 10
+}
+
+### Expected Response: List of issues for the SMP project
+
+# =============================================
+# JIRA - USER MANAGEMENT
+# =============================================
+
+### 2.8 Get Jira User Profile
+POST {{baseUrl}}/api/mcp/tools/jira_get_user_profile/execute
+Content-Type: application/json
+
+{
+  "user_identifier": "arseny.konohov2@gmail.com"
+}
+
+### Expected Response: User profile information
+
+### 2.9 Get Current User Profile
+POST {{baseUrl}}/api/mcp/tools/jira_get_user_profile/execute
+Content-Type: application/json
+
+{
+  "user_identifier": "currentUser()"
+}
+
+### Expected Response: Current user profile information
+
+# =============================================
+# JIRA - TRANSITIONS & WORKFLOW
+# =============================================
+
+### 2.10 Get Issue Transitions
+POST {{baseUrl}}/api/mcp/tools/jira_get_transitions/execute
+Content-Type: application/json
+
+{
+  "issue_key": "SMP-1"
+}
+
+### Expected Response: List of available transitions for the issue
+
+### 2.11 Transition Issue (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/jira_transition_issue/execute
+Content-Type: application/json
+
+{
+  "issue_key": "SMP-1",
+  "transition_id": "11",
+  "comment": "Moving to In Progress via MCP Client"
+}
+
+### Expected Response: Updated issue object or error if read-only mode
+
+# =============================================
+# JIRA - WORKLOG
+# =============================================
+
+### 2.12 Get Worklog
+POST {{baseUrl}}/api/mcp/tools/jira_get_worklog/execute
+Content-Type: application/json
+
+{
+  "issue_key": "SMP-1"
+}
+
+### Expected Response: Worklog entries for the issue
+
+### 2.13 Add Worklog (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/jira_add_worklog/execute
+Content-Type: application/json
+
+{
+  "issue_key": "SMP-1",
+  "time_spent": "2h",
+  "comment": "Working on implementation via MCP Client"
+}
+
+### Expected Response: Added worklog object or error if read-only mode
+
+# =============================================
+# JIRA - ATTACHMENTS
+# =============================================
+
+### 2.14 Download Attachments
+POST {{baseUrl}}/api/mcp/tools/jira_download_attachments/execute
+Content-Type: application/json
+
+{
+  "issue_key": "SMP-1",
+  "target_dir": "./downloads"
+}
+
+### Expected Response: Download operation result
+
+# =============================================
+# JIRA - AGILE/BOARDS
+# =============================================
+
+### 2.15 Get Agile Boards
+POST {{baseUrl}}/api/mcp/tools/jira_get_agile_boards/execute
+Content-Type: application/json
+
+{
+  "project_key": "SMP",
+  "limit": 10
+}
+
+### Expected Response: List of agile boards for the project
+
+### 2.16 Get Board Issues
+POST {{baseUrl}}/api/mcp/tools/jira_get_board_issues/execute
+Content-Type: application/json
+
+{
+  "board_id": "1",
+  "jql": "project = SMP"
+}
+
+### Expected Response: Issues linked to the specified board
+
+### 2.17 Get Sprints from Board
+POST {{baseUrl}}/api/mcp/tools/jira_get_sprints_from_board/execute
+Content-Type: application/json
+
+{
+  "board_id": "1",
+  "state": "active"
+}
+
+### Expected Response: Active sprints for the board
+
+### 2.18 Get Sprint Issues
+POST {{baseUrl}}/api/mcp/tools/jira_get_sprint_issues/execute
+Content-Type: application/json
+
+{
+  "sprint_id": "1001"
+}
+
+### Expected Response: Issues in the specified sprint
+
+# =============================================
+# JIRA - LINKS
+# =============================================
+
+### 2.19 Get Link Types
+POST {{baseUrl}}/api/mcp/tools/jira_get_link_types/execute
+Content-Type: application/json
+
+{}
+
+### Expected Response: List of available issue link types
+
+### 2.20 Create Issue Link (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/jira_create_issue_link/execute
+Content-Type: application/json
+
+{
+  "link_type": "Blocks",
+  "inward_issue_key": "SMP-1",
+  "outward_issue_key": "SMP-2"
+}
+
+### Expected Response: Success confirmation or error if read-only mode
+
+### 2.21 Create Remote Issue Link (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/jira_create_remote_issue_link/execute
+Content-Type: application/json
+
+{
+  "issue_key": "SMP-1",
+  "url": "https://example.com/documentation",
+  "title": "Related Documentation"
+}
+
+### Expected Response: Success confirmation or error if read-only mode
+
+### 2.22 Link to Epic (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/jira_link_to_epic/execute
+Content-Type: application/json
+
+{
+  "issue_key": "SMP-1",
+  "epic_key": "SMP-10"
+}
+
+### Expected Response: Updated issue object or error if read-only mode
+
+# =============================================
+# JIRA - ISSUE MANAGEMENT (WRITE OPERATIONS)
+# =============================================
+
+### 2.23 Create Jira Issue (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/jira_create_issue/execute
+Content-Type: application/json
+
+{
+  "project_key": "SMP",
+  "summary": "Test issue created via MCP Client",
+  "description": "This issue was created to test the MCP Client functionality",
+  "issue_type": "Task"
+}
+
+### Expected Response: Created issue object or error if read-only mode
+
+### 2.24 Batch Create Issues (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/jira_batch_create_issues/execute
+Content-Type: application/json
+
+{
+  "issues": "[{\"project_key\": \"SMP\", \"summary\": \"Batch Issue 1\", \"issue_type\": \"Task\"}, {\"project_key\": \"SMP\", \"summary\": \"Batch Issue 2\", \"issue_type\": \"Bug\"}]"
+}
+
+### Expected Response: Batch creation results or error if read-only mode
+
+### 2.25 Update Jira Issue (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/jira_update_issue/execute
+Content-Type: application/json
+
+{
+  "issue_key": "SMP-1",
+  "fields": {
+    "summary": "Updated summary via MCP Client",
+    "description": "Updated description via MCP Client"
+  }
+}
+
+### Expected Response: Updated issue object or error if read-only mode
+
+### 2.26 Delete Jira Issue (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/jira_delete_issue/execute
+Content-Type: application/json
+
+{
+  "issue_key": "SMP-999"
+}
+
+### Expected Response: Success confirmation or error if read-only mode
+
+### 2.27 Add Comment to Jira Issue (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/jira_add_comment/execute
+Content-Type: application/json
+
+{
+  "issue_key": "SMP-1",
+  "comment": "This comment was added via MCP Client for testing purposes."
+}
+
+### Expected Response: Added comment object or error if read-only mode
+
+# =============================================
+# JIRA - PROJECTS & VERSIONS
+# =============================================
+
+### 2.28 Get All Projects
+POST {{baseUrl}}/api/mcp/tools/jira_get_all_projects/execute
+Content-Type: application/json
+
+{}
+
+### Expected Response: List of accessible projects
+
+### 2.29 Get Project Versions
+POST {{baseUrl}}/api/mcp/tools/jira_get_project_versions/execute
 Content-Type: application/json
 
 {
   "project_key": "SMP"
 }
 
-### Expected Response: Project overview information
+### Expected Response: List of versions for the project
+
+### 2.30 Create Version (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/jira_create_version/execute
+Content-Type: application/json
+
+{
+  "project_key": "SMP",
+  "name": "v1.0.0",
+  "description": "First release version"
+}
+
+### Expected Response: Created version object or error if read-only mode
+
+### 2.31 Batch Create Versions (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/jira_batch_create_versions/execute
+Content-Type: application/json
+
+{
+  "project_key": "SMP",
+  "versions": "[{\"name\": \"v1.1.0\"}, {\"name\": \"v1.2.0\"}]"
+}
+
+### Expected Response: Batch creation results or error if read-only mode
 
 # =============================================
-# PHASE 6: ERROR HANDLING & EDGE CASES
+# JIRA - SPRINTS (WRITE OPERATIONS)
 # =============================================
 
-### 6.1 Test Invalid Tool Name
+### 2.32 Create Sprint (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/jira_create_sprint/execute
+Content-Type: application/json
+
+{
+  "board_id": "1",
+  "sprint_name": "Sprint 1",
+  "start_date": "2025-02-01T09:00:00.000Z",
+  "end_date": "2025-02-14T17:00:00.000Z"
+}
+
+### Expected Response: Created sprint object or error if read-only mode
+
+### 2.33 Update Sprint (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/jira_update_sprint/execute
+Content-Type: application/json
+
+{
+  "sprint_id": "1001",
+  "sprint_name": "Updated Sprint 1",
+  "state": "active"
+}
+
+### Expected Response: Updated sprint object or error if read-only mode
+
+# =============================================
+# JIRA - BATCH OPERATIONS
+# =============================================
+
+### 2.34 Batch Get Changelogs
+POST {{baseUrl}}/api/mcp/tools/jira_batch_get_changelogs/execute
+Content-Type: application/json
+
+{
+  "issue_ids_or_keys": ["SMP-1", "SMP-2"],
+  "limit": 10
+}
+
+### Expected Response: Changelogs for the specified issues
+
+# =============================================
+# =============================================
+# CONFLUENCE FUNCTIONALITY
+# =============================================
+# =============================================
+
+# =============================================
+# CONFLUENCE - SEARCH
+# =============================================
+
+### 3.1 Confluence Search - Basic
+POST {{baseUrl}}/api/mcp/tools/confluence_search/execute
+Content-Type: application/json
+
+{
+  "query": "project documentation",
+  "limit": 10
+}
+
+### Expected Response: Search results from Confluence
+
+### 3.2 Confluence Search with CQL
+POST {{baseUrl}}/api/mcp/tools/confluence_search/execute
+Content-Type: application/json
+
+{
+  "query": "type=page AND space=DEV",
+  "limit": 15
+}
+
+### Expected Response: CQL search results
+
+### 3.3 Confluence Search User
+POST {{baseUrl}}/api/mcp/tools/confluence_search_user/execute
+Content-Type: application/json
+
+{
+  "query": "user.fullname ~ \"John Doe\"",
+  "limit": 5
+}
+
+### Expected Response: User search results
+
+# =============================================
+# CONFLUENCE - PAGES
+# =============================================
+
+### 3.4 Get Confluence Page by ID
+POST {{baseUrl}}/api/mcp/tools/confluence_get_page/execute
+Content-Type: application/json
+
+{
+  "page_id": "123456789"
+}
+
+### Expected Response: Page content and metadata
+
+### 3.5 Get Confluence Page by Title and Space
+POST {{baseUrl}}/api/mcp/tools/confluence_get_page/execute
+Content-Type: application/json
+
+{
+  "title": "Project Documentation",
+  "space_key": "DEV"
+}
+
+### Expected Response: Page content and metadata
+
+### 3.6 Get Page Children
+POST {{baseUrl}}/api/mcp/tools/confluence_get_page_children/execute
+Content-Type: application/json
+
+{
+  "parent_id": "123456789",
+  "limit": 10
+}
+
+### Expected Response: List of child pages
+
+# =============================================
+# CONFLUENCE - COMMENTS
+# =============================================
+
+### 3.7 Get Page Comments
+POST {{baseUrl}}/api/mcp/tools/confluence_get_comments/execute
+Content-Type: application/json
+
+{
+  "page_id": "123456789"
+}
+
+### Expected Response: List of comments for the page
+
+### 3.8 Add Comment (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/confluence_add_comment/execute
+Content-Type: application/json
+
+{
+  "page_id": "123456789",
+  "content": "This comment was added via MCP Client for testing."
+}
+
+### Expected Response: Created comment object or error if read-only mode
+
+# =============================================
+# CONFLUENCE - LABELS
+# =============================================
+
+### 3.9 Get Page Labels
+POST {{baseUrl}}/api/mcp/tools/confluence_get_labels/execute
+Content-Type: application/json
+
+{
+  "page_id": "123456789"
+}
+
+### Expected Response: List of labels for the page
+
+### 3.10 Add Label (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/confluence_add_label/execute
+Content-Type: application/json
+
+{
+  "page_id": "123456789",
+  "name": "testing"
+}
+
+### Expected Response: Updated list of labels or error if read-only mode
+
+# =============================================
+# CONFLUENCE - PAGE MANAGEMENT (WRITE OPERATIONS)
+# =============================================
+
+### 3.11 Create Confluence Page (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/confluence_create_page/execute
+Content-Type: application/json
+
+{
+  "space_key": "DEV",
+  "title": "Test Page via MCP Client",
+  "content": "# Test Page\n\nThis page was created via MCP Client for testing.\n\n## Features Tested\n- MCP Client integration\n- Authentication\n- Page creation",
+  "content_format": "markdown"
+}
+
+### Expected Response: Created page object or error if read-only mode
+
+### 3.12 Update Confluence Page (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/confluence_update_page/execute
+Content-Type: application/json
+
+{
+  "page_id": "123456789",
+  "title": "Updated Test Page via MCP Client",
+  "content": "# Updated Test Page\n\nThis page was updated via MCP Client.\n\n## Updated Features\n- MCP Client integration\n- Authentication\n- Page updates",
+  "content_format": "markdown"
+}
+
+### Expected Response: Updated page object or error if read-only mode
+
+### 3.13 Delete Confluence Page (Write Operation - if enabled)
+POST {{baseUrl}}/api/mcp/tools/confluence_delete_page/execute
+Content-Type: application/json
+
+{
+  "page_id": "999999999"
+}
+
+### Expected Response: Success confirmation or error if read-only mode
+
+# =============================================
+# =============================================
+# ERROR HANDLING & EDGE CASES
+# =============================================
+# =============================================
+
+### 4.1 Test Invalid Tool Name
 POST {{baseUrl}}/api/mcp/tools/invalid_tool_name/execute
 Content-Type: application/json
 
@@ -201,7 +678,7 @@ Content-Type: application/json
 
 ### Expected Response: Error with appropriate error code
 
-### 6.2 Test Missing Required Parameters
+### 4.2 Test Missing Required Parameters
 POST {{baseUrl}}/api/mcp/tools/jira_get_issue/execute
 Content-Type: application/json
 
@@ -211,7 +688,7 @@ Content-Type: application/json
 
 ### Expected Response: Error indicating missing required parameter
 
-### 6.3 Test Invalid JQL Query
+### 4.3 Test Invalid JQL Query
 POST {{baseUrl}}/api/mcp/tools/jira_search/execute
 Content-Type: application/json
 
@@ -222,12 +699,12 @@ Content-Type: application/json
 
 ### Expected Response: JQL validation error
 
-### 6.4 Test Invalid Resource URI
+### 4.4 Test Invalid Resource URI
 GET {{baseUrl}}/api/mcp/resources/read?uri=invalid://resource
 
 ### Expected Response: Resource not found error
 
-### 6.5 Test Invalid Prompt Name
+### 4.5 Test Invalid Prompt Name
 POST {{baseUrl}}/api/mcp/prompts/invalid_prompt_name
 Content-Type: application/json
 
@@ -238,13 +715,15 @@ Content-Type: application/json
 ### Expected Response: Prompt not found error
 
 # =============================================
-# PHASE 7: PERFORMANCE & LOAD TESTING
+# =============================================
+# PERFORMANCE & LOAD TESTING
+# =============================================
 # =============================================
 
-### 7.1 Quick Response Time Test - Simple Tool List
+### 5.1 Quick Response Time Test - Simple Tool List
 GET {{baseUrl}}/api/mcp/tools
 
-### 7.2 Medium Load Test - Search with Pagination
+### 5.2 Medium Load Test - Search with Pagination
 POST {{baseUrl}}/api/mcp/tools/jira_search/execute
 Content-Type: application/json
 
@@ -254,7 +733,7 @@ Content-Type: application/json
   "start_at": 0
 }
 
-### 7.3 Heavy Load Test - Complex Search with All Fields
+### 5.3 Heavy Load Test - Complex Search with All Fields
 POST {{baseUrl}}/api/mcp/tools/jira_search/execute
 Content-Type: application/json
 
@@ -266,45 +745,17 @@ Content-Type: application/json
 }
 
 # =============================================
-# PHASE 8: REAL-TIME COLLABORATION SIMULATION
+# =============================================
+# INTEGRATION WORKFLOW TESTS
+# =============================================
 # =============================================
 
-### 8.1 Concurrent Session Test - Session 1
-POST {{baseUrl}}/api/mcp/initialize
-Content-Type: application/json
-
-### 8.2 Concurrent Session Test - Session 2 (Simulate another client)
-POST {{baseUrl}}/api/mcp/initialize
-Content-Type: application/json
-
-### 8.3 Real-time Data Sync Test - Get Latest Issues
-POST {{baseUrl}}/api/mcp/tools/jira_search/execute
-Content-Type: application/json
-
-{
-  "jql": "project = SMP AND updated >= -1h",
-  "limit": 10
-}
-
-### 8.4 Real-time Data Sync Test - Get User Activity
-POST {{baseUrl}}/api/mcp/tools/jira_search/execute
-Content-Type: application/json
-
-{
-  "jql": "assignee = currentUser() AND updated >= -1h",
-  "limit": 5
-}
-
-# =============================================
-# PHASE 9: INTEGRATION WORKFLOW TESTS
-# =============================================
-
-### 9.1 Complete User Workflow - Initialize and Search
+### 6.1 Complete User Workflow - Initialize and Search
 # Step 1: Initialize
 POST {{baseUrl}}/api/mcp/initialize
 Content-Type: application/json
 
-### 9.2 Complete User Workflow - Get User Profile
+### 6.2 Complete User Workflow - Get User Profile
 POST {{baseUrl}}/api/mcp/tools/jira_get_user_profile/execute
 Content-Type: application/json
 
@@ -312,7 +763,7 @@ Content-Type: application/json
   "user_identifier": "currentUser()"
 }
 
-### 9.3 Complete User Workflow - Search User's Issues
+### 6.3 Complete User Workflow - Search User's Issues
 POST {{baseUrl}}/api/mcp/tools/jira_search/execute
 Content-Type: application/json
 
@@ -321,7 +772,7 @@ Content-Type: application/json
   "limit": 10
 }
 
-### 9.4 Complete User Workflow - Get Specific Issue Details
+### 6.4 Complete User Workflow - Get Specific Issue Details
 POST {{baseUrl}}/api/mcp/tools/jira_get_issue/execute
 Content-Type: application/json
 
@@ -331,7 +782,53 @@ Content-Type: application/json
   "expand": "transitions"
 }
 
-### 9.5 Complete User Workflow - Get Issue Summary Prompt
+### 6.5 Complete User Workflow - Search Confluence Pages
+POST {{baseUrl}}/api/mcp/tools/confluence_search/execute
+Content-Type: application/json
+
+{
+  "query": "project documentation",
+  "limit": 5
+}
+
+# =============================================
+# =============================================
+# RESOURCE MANAGEMENT TESTS
+# =============================================
+# =============================================
+
+### 7.1 List Available Resources
+GET {{baseUrl}}/api/mcp/resources
+
+### Expected Response: Array of available resources
+
+### 7.2 Read Jira Projects Resource
+GET {{baseUrl}}/api/mcp/resources/read?uri=jira://projects
+
+### Expected Response: Jira projects data
+
+### 7.3 Read Jira Issues Resource
+GET {{baseUrl}}/api/mcp/resources/read?uri=jira://issues
+
+### Expected Response: Jira issues data
+
+### 7.4 Read Confluence Spaces Resource
+GET {{baseUrl}}/api/mcp/resources/read?uri=confluence://spaces
+
+### Expected Response: Confluence spaces data
+
+# =============================================
+# =============================================
+# PROMPT HANDLING TESTS
+# =============================================
+# =============================================
+
+### 8.1 List Available Prompts
+GET {{baseUrl}}/api/mcp/prompts
+
+### Expected Response: Array of available prompts
+
+### 8.2 Get Jira Issue Summary Prompt
 POST {{baseUrl}}/api/mcp/prompts/jira_issue_summary
 Content-Type: application/json
 
@@ -339,22 +836,38 @@ Content-Type: application/json
   "issue_key": "SMP-1"
 }
 
+### Expected Response: Formatted issue summary
+
+### 8.3 Get Project Overview Prompt
+POST {{baseUrl}}/api/mcp/prompts/project_overview
+Content-Type: application/json
+
+{
+  "project_key": "SMP"
+}
+
+### Expected Response: Project overview information
+
 # =============================================
-# PHASE 10: CLEANUP & SESSION MANAGEMENT
+# =============================================
+# CLEANUP & SESSION MANAGEMENT
+# =============================================
 # =============================================
 
-### 10.1 Close Client Connection Gracefully
+### 9.1 Close Client Connection Gracefully
 POST {{baseUrl}}/api/mcp/close
 
 ### Expected Response: true indicating successful closure
 
-### 10.2 Verify Client is Closed
+### 9.2 Verify Client is Closed
 GET {{baseUrl}}/api/mcp/ready
 
 ### Expected Response: false indicating client is no longer ready
 
 # =============================================
+# =============================================
 # CURL EXAMPLES FOR AUTOMATION
+# =============================================
 # =============================================
 
 ### Health Check with curl
@@ -375,43 +888,83 @@ GET {{baseUrl}}/api/mcp/ready
 #     "limit": 5
 #   }'
 
+### Execute Confluence Search with curl
+# curl -X POST {{baseUrl}}/api/mcp/tools/confluence_search/execute \
+#   -H "Content-Type: application/json" \
+#   -d '{
+#     "query": "project documentation",
+#     "limit": 10
+#   }'
+
 ### Close Client with curl
 # curl -X POST {{baseUrl}}/api/mcp/close
 
 # =============================================
+# =============================================
 # TESTING WORKFLOW & VALIDATION
+# =============================================
 # =============================================
 # Recommended testing sequence:
 #
-# 1. Run Phase 1 tests to verify client health
-# 2. Run Phase 2 tests to validate MCP initialization
-# 3. Run Phase 3 tests to verify tool functionality
-# 4. Run Phase 4 tests to check resource management
-# 5. Run Phase 5 tests to validate prompt handling
-# 6. Run Phase 6 tests to verify error handling
-# 7. Run Phase 7 tests to check performance
-# 8. Run Phase 8 tests to simulate real-time scenarios
-# 9. Run Phase 9 tests to validate complete workflows
-# 10. Run Phase 10 tests to verify cleanup
+# 1. HEALTH CHECK / INIT:
+#    - Run health checks to verify client is running
+#    - Initialize MCP connection and verify readiness
+#    - List available tools to see what's configured
+#
+# 2. JIRA FUNCTIONALITY:
+#    - Test read operations first (search, get issue, get user profile)
+#    - Test agile/boards operations (get boards, sprints, board issues)
+#    - Test worklog and attachments operations
+#    - Test write operations if needed (create, update, delete, comments)
+#    - Test batch operations and advanced features
+#
+# 3. CONFLUENCE FUNCTIONALITY:
+#    - Test search operations (basic search, CQL, user search)
+#    - Test page operations (get page, get children, get comments)
+#    - Test label operations
+#    - Test write operations if needed (create, update, delete pages)
+#
+# 4. ERROR HANDLING:
+#    - Test with invalid tool names
+#    - Test with missing required parameters
+#    - Test with invalid JQL queries
+#    - Test with invalid resource URIs
+#
+# 5. PERFORMANCE TESTING:
+#    - Test response times for various operations
+#    - Test with different payload sizes
+#    - Test concurrent operations
+#
+# 6. INTEGRATION WORKFLOWS:
+#    - Test complete user workflows
+#    - Test resource management
+#    - Test prompt handling
+#
+# 7. CLEANUP:
+#    - Test session management
+#    - Verify graceful shutdown
 #
 # Expected outcomes:
 # - All health checks should return success
 # - MCP initialization should complete successfully
-# - Tool execution should return valid responses
+# - Tool execution should return valid responses from Atlassian APIs
 # - Error handling should provide meaningful messages
 # - Performance should meet acceptable thresholds
-# - Real-time scenarios should work correctly
 # - Complete workflows should execute end-to-end
 # - Cleanup should complete gracefully
 
 # =============================================
+# =============================================
 # DEBUGGING & TROUBLESHOOTING
 # =============================================
+# =============================================
 # 1. Check client logs for detailed error information
-# 2. Verify server is running and accessible
-# 3. Confirm authentication tokens are valid
+# 2. Verify MCP server is running and accessible on localhost:9000
+# 3. Confirm MCP client is running and accessible on localhost:3332
 # 4. Check network connectivity between client and server
 # 5. Validate MCP protocol compliance
 # 6. Monitor performance metrics during testing
 # 7. Review error responses for specific failure reasons
 # 8. Test individual components before full workflow
+# 9. Verify authentication tokens are valid (if using write operations)
+# 10. Check Atlassian instance connectivity and permissions
