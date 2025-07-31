@@ -1,40 +1,32 @@
-# MCP Client Project Brief
+# Project Brief: MCP Client
 
-## Project Overview
-A Spring Boot-based MCP (Model Context Protocol) client designed to connect to and interact with MCP servers, specifically the Atlassian MCP server for Jira and Confluence operations.
+## Overview
+This is a Java Spring Boot application that implements a Model Context Protocol (MCP) client. The project uses Spring AI's MCP client starter to enable communication with MCP servers.
 
-## Core Objectives
-- Provide a reliable REST API interface for MCP server interactions
-- Enable tool discovery and execution
-- Support resource browsing and retrieval
-- Manage prompt execution
-- Ensure real-time server communication with comprehensive error handling
+## Core Requirements
+- **Primary Goal**: Create a functional MCP client that can connect to and interact with MCP servers
+- **Technology Stack**: Java 21, Spring Boot 3.5.3, Spring AI 1.0.0
+- **Architecture**: Standard Spring Boot web application with MCP client capabilities
 
-## Technical Stack
-- **Framework**: Spring Boot 3.5.3
-- **Language**: Java 21
-- **Build Tool**: Gradle 8.5+
-- **Dependencies**: Spring AI MCP Client, Spring Boot Web
-- **Protocol**: Model Context Protocol (MCP)
+## Project Scope
+- Implement MCP client functionality using Spring AI's MCP client starter
+- Provide web-based interface for MCP interactions
+- Enable communication with external MCP servers
+- Support standard MCP operations (tools, resources, prompts)
 
-## Key Features
-- Full MCP protocol implementation
-- Atlassian integration (Jira/Confluence)
-- REST API endpoints for all operations
-- Async operations with CompletableFuture
-- Robust error handling and logging
-- Flexible server configuration management
+## Key Constraints
+- Must use Java 21 as the target language version
+- Built on Spring Boot 3.5.3 framework
+- Uses Spring AI 1.0.0 for MCP client implementation
+- Gradle-based build system
 
-## Project Status
-- ✅ Basic Spring Boot application structure
-- ✅ MCP client dependencies configured
-- ✅ Core API endpoints defined
-- ✅ HTTP validation tests available
-- 🔄 Ready for implementation and testing
+## Success Criteria
+- Application starts successfully
+- Can establish connections to MCP servers
+- Provides functional web interface for MCP operations
+- Handles MCP protocol communications correctly
+- Maintains clean, maintainable code structure
 
-## Next Steps
-- Implement core MCP client functionality
-- Test connection with Atlassian MCP server
-- Validate all API endpoints
-- Ensure proper error handling
-- Document usage patterns
+## Repository
+- GitHub: https://github.com/arseni-konakhau/mcp-client.git
+- Current version: 0.0.1-SNAPSHOT

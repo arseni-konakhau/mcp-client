@@ -1,42 +1,103 @@
-# Technical Context
+# Technical Context: MCP Client
 
 ## Technology Stack
-- **Framework**: Spring Boot 3.5.3
-- **Language**: Java 21
-- **Build Tool**: Gradle 8.5+
-- **Dependencies**: 
-  - Spring Boot Web Starter
-  - Spring AI MCP Client
-  - Spring Boot DevTools
-  - Spring Boot Test
 
-## MCP Protocol Implementation
-- **Protocol**: Model Context Protocol (MCP)
-- **Client Library**: Spring AI MCP Client
-- **Server Integration**: Atlassian MCP Server
-- **Communication**: Async operations with CompletableFuture
+### Core Framework
+- **Java 21**: Latest LTS version with modern language features
+- **Spring Boot 3.5.3**: Enterprise-grade application framework
+- **Spring AI 1.0.0**: AI integration framework with MCP support
+- **Gradle**: Build automation and dependency management
 
-## API Design
-- **Port**: 3332 (configurable)
-- **Protocol**: HTTP/REST
-- **Content Type**: application/json
-- **Authentication**: TBD (currently none)
-- **Error Handling**: Standard HTTP status codes
+### Key Dependencies
+- **spring-boot-starter-web**: Web application capabilities
+- **spring-ai-starter-mcp-client**: MCP client implementation
+- **spring-boot-starter-actuator**: Monitoring and management endpoints
+- **spring-boot-devtools**: Development-time enhancements
+- **spring-boot-starter-test**: Testing framework
+- **junit-platform-launcher**: Test execution platform
+
+## Development Setup
+
+### Prerequisites
+- Java 21 JDK installed
+- Gradle (wrapper included in project)
+- IDE with Java support (IntelliJ IDEA, Eclipse, VS Code)
+
+### Project Structure
+```
+mcp-client/
+├── build.gradle                 # Build configuration
+├── settings.gradle              # Project settings
+├── gradlew                      # Gradle wrapper (Unix)
+├── gradlew.bat                  # Gradle wrapper (Windows)
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/mcpclient/mcpclient/
+│   │   │       └── McpclientApplication.java
+│   │   └── resources/
+│   │       ├── application.properties
+│   │       ├── static/          # Static web resources
+│   │       └── templates/       # Template files
+│   └── test/
+│       └── java/
+│           └── com/mcpclient/mcpclient/
+│               └── McpclientApplicationTests.java
+├── memory-bank/                 # Project documentation
+└── clinerules                   # Development guidelines
+```
+
+### Build Commands
+- **Run Application**: `./gradlew bootRun`
+- **Build JAR**: `./gradlew build`
+- **Run Tests**: `./gradlew test`
+- **Clean Build**: `./gradlew clean build`
+
+## Technical Constraints
+
+### Java Version
+- **Target**: Java 21 (LTS)
+- **Toolchain**: Configured in build.gradle
+- **Features**: Can leverage modern Java features (records, pattern matching, etc.)
+
+### Spring Boot Configuration
+- **Version**: 3.5.3 (latest stable)
+- **Auto-configuration**: Leverages Spring Boot's auto-configuration
+- **Profiles**: Can use Spring profiles for different environments
+
+### MCP Integration
+- **Spring AI**: Uses Spring AI's MCP client starter
+- **Protocol**: Implements MCP specification
+- **Transport**: Supports various MCP transport mechanisms
 
 ## Development Environment
-- **IDE**: Any Java IDE (IntelliJ, Eclipse, VS Code)
-- **Package Manager**: Gradle
-- **Version Control**: Git
-- **Testing**: JUnit 5, Spring Boot Test
 
-## Deployment
-- **Container**: Docker (TBD)
-- **Platform**: Any JVM-compatible platform
-- **Configuration**: application.properties
-- **Monitoring**: Spring Boot Actuator (TBD)
+### IDE Configuration
+- Java 21 language level
+- Gradle project import
+- Spring Boot run configurations
+- Code formatting and style guides
 
-## Dependencies
-- **Core**: Spring Boot ecosystem
-- **MCP**: Spring AI MCP Client
-- **Testing**: JUnit, Spring Test
-- **Development**: DevTools for hot reload
+### Testing Strategy
+- Unit tests with JUnit 5
+- Integration tests with Spring Boot Test
+- MCP client functionality testing
+- Web layer testing
+
+## Deployment Considerations
+
+### Packaging
+- Executable JAR with embedded Tomcat
+- Docker containerization ready
+- Cloud-native deployment support
+
+### Configuration
+- Externalized configuration via application.properties
+- Environment-specific profiles
+- MCP server connection configuration
+- **Custom Port**: Application configured to run on port 3332 (instead of default 8080)
+
+### Monitoring
+- Spring Boot Actuator endpoints
+- Health checks and metrics
+- Logging configuration
