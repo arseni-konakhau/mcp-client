@@ -91,7 +91,7 @@ POST {{baseUrl}}/api/mcp/tools/jira_get_issue/execute
 Content-Type: application/json
 
 {
-  "issue_key": "SMP-1",
+  "issue_key": "SMP-7",
   "fields": "summary,status,assignee,description,comments",
   "expand": "transitions,changelog",
   "comment_limit": 5
