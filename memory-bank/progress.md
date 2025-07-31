@@ -43,7 +43,7 @@
 - **Health Check Endpoints**: Fixed 404 error, now returns proper health status
 - **Application Info**: Enhanced with comprehensive application details
 - **Monitoring Endpoints**: Exposed health, info, metrics, env, beans, configprops endpoints
-- **Custom Port Configuration**: Application runs on port 3332 for better organization
+- **Custom Port Configuration**: Application runs on port 3334 for better organization
 - **Detailed Health Information**: Configured to show detailed health status and components
 
 ### ✅ Testing Infrastructure

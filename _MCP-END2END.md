@@ -48,7 +48,7 @@ cd ../mcp-client
 # Run the application
 ./gradlew bootRun
 
-# Access at http://localhost:3332
+# Access at http://localhost:3334
 ```
 
 ## 🔧 Detailed Setup Instructions
@@ -190,7 +190,7 @@ chmod +x gradlew
 ### Step 3: Verify Client
 
 Access the application:
-- **URL**: http://localhost:3332
+- **URL**: http://localhost:3334
 - **Expected**: 404 error with JSON response (this is normal - no controllers implemented yet)
 
 The 404 response confirms the Spring Boot application is running correctly.
@@ -303,7 +303,7 @@ Once your IDE is configured, you can test these commands with your AI assistant:
 
 ### Test MCP Client
 
-The MCP client is currently in foundation phase. Access http://localhost:3332 to verify it's running.
+The MCP client is currently in foundation phase. Access http://localhost:3334 to verify it's running.
 
 ## 🔧 Configuration Options
 
@@ -343,7 +343,7 @@ NO_PROXY=localhost,.company.com
 Edit `mcp-client/src/main/resources/application.properties`:
 ```properties
 spring.application.name=mcpclient
-server.port=3332
+server.port=3334
 
 # Add MCP-specific configuration as development progresses
 ```
@@ -387,8 +387,8 @@ export JAVA_HOME=/path/to/java21
 
 #### Port Already in Use
 ```bash
-# Find process using port 3332
-lsof -i :3332
+# Find process using port 3334
+lsof -i :3334
 
 # Kill the process
 kill -9 <PID>

@@ -37,9 +37,9 @@ gradlew.bat bootRun
 ```
 
 ### 3. Access the Application
-- **Application URL**: http://localhost:3332
+- **Application URL**: http://localhost:3334
 - **Application Name**: mcpclient
-- **Custom Port**: 3332
+- **Custom Port**: 3334
 
 ## Detailed Setup Instructions
 
@@ -110,8 +110,8 @@ java -jar build/libs/mcpclient-0.0.1-SNAPSHOT.jar
 ## Application Access
 
 ### Default Configuration
-- **URL**: http://localhost:3332
-- **Port**: 3332 (customized)
+- **URL**: http://localhost:3334
+- **Port**: 3334 (customized)
 - **Context Path**: / (root)
 - **Application Name**: mcpclient
 
@@ -119,7 +119,7 @@ java -jar build/libs/mcpclient-0.0.1-SNAPSHOT.jar
 Once running, verify the application is running:
 ```bash
 # Check if application is responding (will return 404 - this is expected)
-curl http://localhost:3332
+curl http://localhost:3334
 # Expected: 404 error with JSON response - this means the app is running correctly
 ```
 
@@ -171,7 +171,7 @@ The 404 response with JSON error details confirms the application is running pro
 The application configuration is in `src/main/resources/application.properties`:
 ```properties
 spring.application.name=mcpclient
-server.port=3332
+server.port=3334
 # Add additional configuration as needed
 ```
 
@@ -203,12 +203,12 @@ export PATH=$JAVA_HOME/bin:$PATH
 chmod +x gradlew
 ```
 
-#### Issue: "Port 3332 already in use"
+#### Issue: "Port 3334 already in use"
 **Solutions**:
-1. Kill process using port 3332:
+1. Kill process using port 3334:
    ```bash
-   # Find process using port 3332
-   lsof -i :3332
+   # Find process using port 3334
+   lsof -i :3334
    # Kill the process
    kill -9 <PID>
    ```
@@ -226,7 +226,7 @@ chmod +x gradlew
 2. Check Java version compatibility
 3. Verify internet connection for dependency downloads
 
-#### Issue: "Getting 404 error when accessing http://localhost:3332"
+#### Issue: "Getting 404 error when accessing http://localhost:3334"
 **This is EXPECTED behavior** - the application is working correctly!
 
 **Why you see 404:**
@@ -293,7 +293,7 @@ logging.level.com.mcpclient=DEBUG
 ```bash
 java -jar build/libs/mcpclient-0.0.1-SNAPSHOT.jar \
   --spring.profiles.active=prod \
-  --server.port=3332
+  --server.port=3334
 ```
 
 ### Docker (Future Enhancement)
@@ -301,7 +301,7 @@ java -jar build/libs/mcpclient-0.0.1-SNAPSHOT.jar \
 # Dockerfile example for future use
 FROM openjdk:21-jre-slim
 COPY build/libs/mcpclient-0.0.1-SNAPSHOT.jar app.jar
-EXPOSE 3332
+EXPOSE 3334
 ENTRYPOINT ["java", "-jar", "/app.jar"]
 ```
 
