@@ -183,6 +183,10 @@ _http_/
 # Run the application
 ./gradlew bootRun
 
+# Dev
+./gradlew bootRun --continuous
+
+
 # Create executable JAR
 ./gradlew bootJar
 ```
