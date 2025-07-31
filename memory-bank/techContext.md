@@ -95,7 +95,7 @@ mcp-client/
 - Externalized configuration via application.properties
 - Environment-specific profiles
 - MCP server connection configuration
-- **Custom Port**: Application configured to run on port 3334 (instead of default 8080)
+- **Custom Port**: Application configured to run on port 3335 (instead of default 8080)
 
 ### Monitoring
 - Spring Boot Actuator endpoints

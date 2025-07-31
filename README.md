@@ -71,18 +71,18 @@ Ensure the Atlassian MCP server is properly configured and running. The client i
 ./gradlew bootRun
 ```
 
-The application will start on `http://localhost:3334`
+The application will start on `http://localhost:3335`
 
 ### 4. Test the Connection
 ```bash
 # Initialize the connection
-curl -X POST http://localhost:3334/api/mcp/initialize
+curl -X POST http://localhost:3335/api/mcp/initialize
 
 # Check if ready
-curl http://localhost:3334/api/mcp/ready
+curl http://localhost:3335/api/mcp/ready
 
 # List available tools
-curl http://localhost:3334/api/mcp/tools
+curl http://localhost:3335/api/mcp/tools
 ```
 
 ## Configuration
@@ -90,7 +90,7 @@ curl http://localhost:3334/api/mcp/tools
 ### Application Properties
 ```properties
 # Server configuration
-server.port=3334
+server.port=3335
 
 # MCP Server Configuration
 mcp.servers.atlassian.command=python
@@ -104,7 +104,7 @@ logging.level.com.mcpclient=DEBUG
 
 ### Environment Variables
 You can override configuration using environment variables:
-- `SERVER_PORT` - Application port (default: 3334)
+- `SERVER_PORT` - Application port (default: 3335)
 - `MCP_ATLASSIAN_COMMAND` - MCP server command
 - `MCP_ATLASSIAN_WORKING_DIR` - MCP server working directory
 
@@ -116,7 +116,7 @@ The project includes a comprehensive HTTP test file at `_http_/mcp-client-test.h
 ### Example: Execute a Jira Tool
 ```bash
 # List Jira projects
-curl -X POST http://localhost:3334/api/mcp/tools/jira_list_projects/execute \
+curl -X POST http://localhost:3335/api/mcp/tools/jira_list_projects/execute \
   -H "Content-Type: application/json" \
   -d '{"max_results": 10}'
 ```
@@ -124,7 +124,7 @@ curl -X POST http://localhost:3334/api/mcp/tools/jira_list_projects/execute \
 ### Example: Search Confluence Pages
 ```bash
 # Search Confluence pages
-curl -X POST http://localhost:3334/api/mcp/tools/confluence_search_pages/execute \
+curl -X POST http://localhost:3335/api/mcp/tools/confluence_search_pages/execute \
   -H "Content-Type: application/json" \
   -d '{"query": "documentation", "limit": 5}'
 ```
@@ -132,7 +132,7 @@ curl -X POST http://localhost:3334/api/mcp/tools/confluence_search_pages/execute
 ### Example: Read a Resource
 ```bash
 # Read Jira projects resource
-curl "http://localhost:3334/api/mcp/resources/read?uri=jira://projects"
+curl "http://localhost:3335/api/mcp/resources/read?uri=jira://projects"
 ```
 
 ## Architecture

@@ -200,7 +200,7 @@ REMEMBER: After every memory reset, I begin completely fresh. The Memory Bank is
 - **Status Clarity**: Important to explain expected vs. unexpected behaviors
 - **Troubleshooting Focus**: Detailed troubleshooting sections are essential
 - **Phase-Based Approach**: User follows structured development phases from memory bank
-- **Port Customization**: User prefers custom port 3334 over default 8080
+- **Port Customization**: User prefers custom port 3335 over default 8080
 - **Consistency**: All documentation must reflect configuration changes consistently
 - **Integration Testing**: User expects thorough validation of all endpoints with real data
 - **Memory Bank Updates**: User requests memory bank updates after major milestones

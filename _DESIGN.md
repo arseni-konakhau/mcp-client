@@ -14,7 +14,7 @@ graph TB
     end
 
     subgraph "MCP Client Layer (Java)"
-        subgraph "Spring Boot Application (Port 3334)"
+        subgraph "Spring Boot Application (Port 3335)"
             WebUI[🌐 Web Dashboard<br/>HTML/CSS/JS]
             RestAPI[📡 REST API Controller<br/>McpController.java]
             Service[⚙️ MCP Service Layer<br/>McpService.java]
@@ -122,7 +122,7 @@ graph TB
 
 ### 2. MCP Client Layer (Java Spring Boot)
 
-#### Web Application (Port 3334)
+#### Web Application (Port 3335)
 ```java
 // Main Application
 @SpringBootApplication
@@ -333,7 +333,7 @@ sequenceDiagram
 ### Java Client Configuration
 ```properties
 # application.properties
-server.port=3334
+server.port=3335
 mcp.server.command=cd ../mcp-server--atlassian && uv run mcp-atlassian
 mcp.server.args=--env-file,.env,--verbose
 mcp.server.environment.JIRA_URL=https://company.atlassian.net
@@ -400,7 +400,7 @@ cd mcp-client
 docker run --rm -i --env-file .env ghcr.io/sooperset/mcp-atlassian:latest
 
 # MCP Client (when containerized)
-docker run --rm -p 3334:3334 mcp-client:latest
+docker run --rm -p 3335:3335 mcp-client:latest
 ```
 
 ### IDE Integration
@@ -439,7 +439,7 @@ docker run --rm -p 3334:3334 mcp-client:latest
 npx @modelcontextprotocol/inspector uv run mcp-atlassian --env-file .env
 
 # Test Java client endpoints
-curl -X GET http://localhost:3334/api/mcp/tools
+curl -X GET http://localhost:3335/api/mcp/tools
 
 # Check server logs
 uv run mcp-atlassian --env-file .env --verbose
