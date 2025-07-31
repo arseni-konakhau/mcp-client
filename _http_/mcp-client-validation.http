@@ -376,8 +376,8 @@ Content-Type: application/json
 
 {
   "project_key": "SMP",
-  "summary": "Test issue created via MCP Client",
-  "description": "This issue was created to test the MCP Client functionality",
+  "summary": "(via client) Test issue created via MCP Client",
+  "description": "(via client) This issue was created to test the MCP Client functionality",
   "issue_type": "Task"
 }
 
