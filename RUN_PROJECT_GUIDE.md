@@ -1,11 +1,82 @@
-# MCP Client - Step-by-Step Running Guide
+# MCP Client - Production Deployment Guide (UNIX/Linux)
 
-## Prerequisites
+## Simplified Production Deployment
+
+### 1. Clone and Build
+```bash
+git clone https://github.com/arseni-konakhau/mcp-client.git
+cd mcp-client
+chmod +x gradlew
+./gradlew clean build
+```
+
+### 2. Create systemd Service
+```bash
+sudo tee /etc/systemd/system/mcpclient.service > /dev/null <<EOL
+[Unit]
+Description=MCP Client Application
+After=network.target
+
+[Service]
+Type=simple
+User=$USER
+WorkingDirectory=$(pwd)
+ExecStart=/usr/bin/java -jar build/libs/mcpclient-0.0.1-SNAPSHOT.jar
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+EOL
+```
+
+### 3. Start and Enable Service
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable mcpclient
+sudo systemctl start mcpclient
+```
+
+### 4. Verify Deployment
+```bash
+# Check service status
+sudo systemctl status mcpclient
+
+# Verify application health
+curl -s http://localhost:3335/actuator/health | jq .
+
+# View logs
+sudo journalctl -u mcpclient -f
+```
+
+### 5. Basic Management
+```bash
+# Restart service
+sudo systemctl restart mcpclient
+
+# Stop service
+sudo systemctl stop mcpclient
+
+# Disable auto-start
+sudo systemctl disable mcpclient
+```
+
+### Notes:
+- Runs on port 3335 by default
+- Automatically restarts on failure
+- Logs available via journalctl
+- Starts automatically on system boot
+
+
+
+## 1. Prerequisites
 
 ### Required Software
 - **Java 21 JDK** (OpenJDK or Oracle JDK) - ✅ You have: OpenJDK 21.0.5
 - **Git** (for cloning the repository)
 - **Terminal/Command Prompt** access
+
+
 
 ### Verify Your Environment
 ```bash
@@ -48,6 +119,8 @@ ls -la
 ./gradlew --version
 ```
 
+
+
 ### Step 3: Build and Run in Foreground
 ```bash
 # Option A: Run directly with Gradle (Recommended for development)
@@ -60,6 +133,7 @@ java -jar build/libs/mcpclient-0.0.1-SNAPSHOT.jar
 # Option C: Run with specific profile
 ./gradlew bootRun --args='--spring.profiles.active=dev'
 ```
+
 
 ### Step 4: Verify Application is Running
 ```bash
@@ -445,4 +519,4 @@ Once the application is running successfully:
 - **Technical Context**: `memory-bank/techContext.md`
 - **Development Progress**: `memory-bank/progress.md`
 - **Spring Boot Documentation**: https://spring.io/projects/spring-boot
-- **Spring AI Documentation**: https://docs.spring.io/spring-ai/reference/ 
+- **Spring AI Documentation**: https://docs.spring.io/spring-ai/reference/
