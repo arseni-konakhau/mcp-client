@@ -17,7 +17,7 @@ cd mcp-client
 2. Run with automated setup:
 ```bash
 chmod +x start.sh
-./start.sh
+bash ./start.sh
 ```
 
 3. Verify:
