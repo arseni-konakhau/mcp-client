@@ -28,15 +28,18 @@ cd mcp-client
 
 3. Verify:
 ```bash
+# Check if process is running:
+ps -p $(cat mcpclient.pid) > /dev/null && echo "Running (PID: $(cat mcpclient.pid))" || echo "Not running"
+
+# Check application health:
 curl http://localhost:3335/actuator/health
 # Should return {"status":"UP"}
-```
 
-4. Stop when needed:
-```bash
-kill $(cat mcpclient.pid)
+# Verify process was stopped:
+kill $(cat mcpclient.pid) && echo "Process stopped" || echo "Process already stopped"
 rm mcpclient.pid
 ```
+
 
 ## Key Details
 - Runs on port 3335
