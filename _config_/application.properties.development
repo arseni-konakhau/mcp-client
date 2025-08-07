@@ -1,6 +1,6 @@
 spring.application.name=mcpclient
 server.port=3335
-server.address=0.0.0.0
+server.address=localhost
 
 # Spring Boot Actuator Configuration
 management.endpoints.web.exposure.include=health,info,metrics,env,beans,configprops
@@ -22,8 +22,8 @@ info.build.time=@maven.build.timestamp@
 
 # MCP Server Configuration
 mcp.servers.atlassian.command=/bin/sh
-mcp.servers.atlassian.arguments=-c,cd /root/mcp-server--atlassian && /root/.local/bin/uv run mcp-atlassian --env-file .env --verbose
-mcp.servers.atlassian.working-directory=/root/mcp-server--atlassian
+mcp.servers.atlassian.arguments=-c,cd /Users/arsenikonakhau/Desktop/_DEVELOPER_/MCP/mcp-server--atlassian && /opt/homebrew/bin/uv run mcp-atlassian --env-file .env --verbose
+mcp.servers.atlassian.working-directory=/Users/arsenikonakhau/Desktop/_DEVELOPER_/MCP/mcp-server--atlassian
 
 # Logging configuration
 logging.level.io.modelcontextprotocol=DEBUG
