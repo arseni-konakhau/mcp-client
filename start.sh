@@ -46,6 +46,6 @@ if [ $? -eq 0 ]; then
   echo "Application is running successfully on ${SERVER_ADDRESS}:${SERVER_PORT}"
   echo "Access: http://${SERVER_ADDRESS}:${SERVER_PORT}"
 else
-  echo "ERROR: Application failed to start"
+  echo "ERROR: Application failed to start (valid only for dev mode, so please check on public access for following address: http://${SERVER_ADDRESS}:${SERVER_PORT})"
   exit 1
 fi
