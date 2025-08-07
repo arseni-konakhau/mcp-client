@@ -30,9 +30,8 @@ curl http://localhost:3335/actuator/health
 # Should return {"status":"UP"}
 ```
 
-4. Stop Process
+4. Stop Process:
 ```bash
-# Verify process was stopped:
 pkill -f mcpclient
 ```
 
