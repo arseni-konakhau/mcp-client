@@ -1,5 +1,6 @@
 __bin__
 logs
+.env
 
 .gradle
 build/
