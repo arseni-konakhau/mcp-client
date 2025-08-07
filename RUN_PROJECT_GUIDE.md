@@ -5,13 +5,6 @@
 - Git
 - Gradle 8.14.3 (included via wrapper)
 
-## Quick Start
-```bash
-git clone https://github.com/arseni-konakhau/mcp-client.git
-cd mcp-client
-chmod +x start.sh
-./start.sh
-```
 
 ## Detailed Deployment
 
@@ -23,6 +16,7 @@ cd mcp-client
 
 2. Run with automated setup:
 ```bash
+chmod +x start.sh
 ./start.sh
 ```
 
@@ -34,7 +28,10 @@ ps aux | grep mcpclient
 # Check application health:
 curl http://localhost:3335/actuator/health
 # Should return {"status":"UP"}
+```
 
+4. Stop Process
+```bash
 # Verify process was stopped:
 pkill -f mcpclient
 ```
@@ -45,4 +42,3 @@ pkill -f mcpclient
 - Uses Java 21.0.5 (Temurin)
 - Uses Gradle 8.14.3 via wrapper
 - Logs to: logs/mcpclient.log
-- Process ID in: mcpclient.pid
