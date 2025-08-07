@@ -24,8 +24,16 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# Run on port 3335
-echo "Starting application on port 3335..."
+# Source environment variables
+if [ -f .env ]; then
+  source .env
+fi
+
+# Use SERVER_PORT from .env or default to 3335
+SERVER_PORT=${SERVER_PORT:-3335}
+SERVER_ADDRESS=${SERVER_ADDRESS:-0.0.0.0}
+
+echo "Starting application on ${SERVER_ADDRESS}:${SERVER_PORT}..."
 mkdir -p logs
 nohup java -jar build/libs/mcpclient-0.0.1-SNAPSHOT.jar > logs/mcpclient.log 2>&1 &
 echo $! > mcpclient.pid
@@ -33,10 +41,10 @@ echo $! > mcpclient.pid
 # Verify startup
 echo "Validating startup..."
 sleep 5
-curl -s http://localhost:3335/actuator/health | grep -q '"status":"UP"'
+curl -s http://${SERVER_ADDRESS}:${SERVER_PORT}/actuator/health | grep -q '"status":"UP"'
 if [ $? -eq 0 ]; then
-  echo "Application is running successfully on port 3335"
-  echo "Access: http://localhost:3335"
+  echo "Application is running successfully on ${SERVER_ADDRESS}:${SERVER_PORT}"
+  echo "Access: http://${SERVER_ADDRESS}:${SERVER_PORT}"
 else
   echo "ERROR: Application failed to start"
   exit 1
