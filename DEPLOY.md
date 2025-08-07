@@ -1,4 +1,4 @@
-# MCP Client - Production Deployment Guide
+# MCP Client - Deployment Guide
 
 ## Prerequisites
 - Java 21 JDK (OpenJDK or Oracle) - Current: 21.0.5 (Temurin)
