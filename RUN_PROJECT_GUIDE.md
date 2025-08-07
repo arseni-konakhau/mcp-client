@@ -29,15 +29,14 @@ cd mcp-client
 3. Verify:
 ```bash
 # Check if process is running:
-ps -p $(cat mcpclient.pid 2>/dev/null) >/dev/null 2>&1 && echo "Running (PID: $(cat mcpclient.pid 2>/dev/null))" || echo "Not running"
+ps aux | grep mcpclient
 
 # Check application health:
 curl http://localhost:3335/actuator/health
 # Should return {"status":"UP"}
 
 # Verify process was stopped:
-kill $(cat mcpclient.pid 2>/dev/null) 2>/dev/null && echo "Process stopped" || echo "Process not running"
-rm -f mcpclient.pid
+pkill -f mcpclient
 ```
 
 
