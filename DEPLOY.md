@@ -1,8 +1,8 @@
 # MCP Client - Deployment Guide
 
 ## Prerequisites
-- Java 21 JDK (OpenJDK or Oracle) - Current: 21.0.5 (Temurin)
 - Git
+- Java 21 JDK (OpenJDK or Oracle) - Current: 21.0.5 (Temurin)
 - Gradle 8.14.3 (included via wrapper)
 
 
