@@ -2,6 +2,7 @@ __bin__
 logs
 .env
 .DS_Store
+*.pid
 
 .gradle
 build/
