@@ -30,8 +30,8 @@ if [ -f .env ]; then
 fi
 
 # Use SERVER_PORT from .env or default to 3335
-SERVER_PORT=${SERVER_PORT:-3335}
-SERVER_ADDRESS=${SERVER_ADDRESS:-0.0.0.0}
+SERVER_PORT=${SERVER_PORT}
+SERVER_ADDRESS=${SERVER_ADDRESS}
 
 echo "Starting application on ${SERVER_ADDRESS}:${SERVER_PORT}..."
 mkdir -p logs
