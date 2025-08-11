@@ -22,8 +22,8 @@ info.build.time=@maven.build.timestamp@
 
 # MCP Server Configuration
 mcp.servers.atlassian.command=/bin/sh
-mcp.servers.atlassian.arguments=-c,cd /root/mcp-server--atlassian && /opt/homebrew/bin/uv run mcp-atlassian --env-file .env --verbose
-mcp.servers.atlassian.working-directory=/root/mcp-server--atlassian
+mcp.servers.atlassian.arguments=-c,cd /opt/ai/mcp/mcp-server--atlassian && uv run mcp-atlassian --env-file .env --verbose
+mcp.servers.atlassian.working-directory=/opt/ai/mcp/mcp-server--atlassian
 
 # Logging configuration
 logging.level.io.modelcontextprotocol=DEBUG
