@@ -7,14 +7,21 @@
   - DNS (в поле "first and last name" должен совпадать с DNS приложения)
 
 
-## Генерация keystore
+## Генерация
+
+### keystore
 ```bash
 keytool -genkeypair -alias {придуманный alias} -keyalg RSA -keysize 4096 -storetype PKCS12 -keystore {имя keystore}.p12 -validity 3650 -storepass {придуманный пароль}
 ```
 
-## Генерация сертификата
+### сертификата
 ```bash
 keytool -export -keystore {имя keystore}.p12 -alias {придуманный alias} -file {имя сертификата}.crt
+```
+
+### проверь
+```bash
+keytool -list -keystore {имя keystore}.p12 -storepass {придуманный пароль}
 ```
 
 ## Настройка проекта
