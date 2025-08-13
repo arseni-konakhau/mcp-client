@@ -45,3 +45,7 @@ logs
 .env
 *.pid
 # src/main/resources/
+
+
+*.crt
+*.p12
