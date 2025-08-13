@@ -1,4 +1,4 @@
-# Настройка HTTPS для приложения
+# HTTPS для Spring Boot
 
 ## Общие требования
 - При генерации SSL-сертификата дополнительную информацию можно пропускать (нажимая Enter)
@@ -6,24 +6,25 @@
   - Пароль
   - DNS (в поле "first and last name" должен совпадать с DNS приложения)
 
-## Для Spring Boot приложения
 
-### Генерация keystore
+## Генерация keystore
 ```bash
 keytool -genkeypair -alias {придуманный alias} -keyalg RSA -keysize 4096 -storetype PKCS12 -keystore {имя keystore}.p12 -validity 3650 -storepass {придуманный пароль}
 ```
 
-### Генерация сертификата
+## Генерация сертификата
 ```bash
 keytool -export -keystore {имя keystore}.p12 -alias {придуманный alias} -file {имя сертификата}.crt
 ```
 
-### Настройка проекта
-1. Разместить файлы в папке `resources`:
+## Настройка проекта
+
+### 1. Разместить файлы
+в папке `resources`:
    - `keystore.p12`
    - `{имя сертификата}.crt`
 
-2. Добавить в `application.properties`/`application.yml`:
+### 2. application.properties
 ```properties
 server.ssl.enabled=true
 server.ssl.protocol=TLS
