@@ -44,8 +44,9 @@ logs
 .DS_Store
 .env
 *.pid
-# src/main/resources/
 
 
+src/main/resourcess/
+src/main/resourcess/application.properties
 *.crt
 *.p12
