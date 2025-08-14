@@ -35,5 +35,5 @@ server.ssl.protocol=TLS
 server.ssl.enabled-protocols=TLSv1.3
 server.ssl.key-store-type=PKCS12
 server.ssl.key-store=classpath:mcp-client-keystore.p12
-server.ssl.key-store-password=1111111111111111
+server.ssl.key-store-password=11111111111
 server.ssl.key-alias=mcp-client

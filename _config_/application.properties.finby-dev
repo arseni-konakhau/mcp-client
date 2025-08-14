@@ -28,3 +28,12 @@ mcp.servers.atlassian.working-directory=/opt/ai/mcp/mcp-server--atlassian
 # Logging configuration
 logging.level.io.modelcontextprotocol=DEBUG
 logging.level.com.mcpclient=DEBUG
+
+# HTTPS:
+server.ssl.enabled=true
+server.ssl.protocol=TLS
+server.ssl.enabled-protocols=TLSv1.3
+server.ssl.key-store-type=PKCS12
+server.ssl.key-store=classpath:mcp-client-keystore.p12
+server.ssl.key-store-password=11111111111
+server.ssl.key-alias=mcp-client
