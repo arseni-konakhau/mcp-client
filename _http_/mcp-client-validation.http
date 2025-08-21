@@ -571,7 +571,7 @@ POST {{baseUrl}}/api/mcp/tools/confluence_search/execute
 Content-Type: application/json
 
 {
-  "query": "type=page AND space=DEV",
+  "query": "type=page",
   "limit": 15
 }
 
